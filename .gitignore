@@ -6,3 +6,5 @@ watcher
 **/node_modules
 **/package-lock.json
 **/.dockerignore
+**/Dockerfile
+**/.gitignore
