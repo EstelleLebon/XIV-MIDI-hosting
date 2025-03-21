@@ -4,9 +4,14 @@
   "main": "src/app.ts",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/app.ts",
-    "start": "tsx app.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "tsx watch src/server.ts",
+    "build": "tsx build src/server.ts",
+    "start": "node dist/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "init": "npx prisma migrate dev --name init",
+    "migrate": "npx prisma migrate deploy",
+    "reset": "npx prisma migrate reset --force",
+    "generate": "npx prisma generate"
   },
   "author": "",
   "license": "ISC",

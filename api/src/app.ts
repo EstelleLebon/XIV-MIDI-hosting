@@ -8,6 +8,7 @@ import {
 	isResponseSerializationError,
 } from 'fastify-type-provider-zod';
 import { initDatabaseConnection } from './shared/infra/database.ts';
+import { usersPrivateRoutes } from './http/controllers/users/routes/index.ts';
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -30,8 +31,9 @@ app.get('/', () => {
 // private api routes
 if (process.env.public == 'true') {
 	// app.register(filesPublicRoutes);
+	const o = 'o';
 } else {
-	// app.register(usersPrivateRoutes);
+	app.register(usersPrivateRoutes);
 	// app.register(filesPrivateRoutes);
 }
 
