@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int      @id @default(autoincrement())
+  discord_id        String   @unique
+  discord_name      String
+  editor_name       String
+  editor_channel_id String?
+  admin             Boolean
+  editor_role       Boolean
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  files             File[]   @relation("UserFiles")
+}
+
+model File {
+  id                  Int      @id @default(autoincrement())
+  md5                 String   @unique
+  editor_discord_id   String
+  editor              String
+  artist              String
+  title               String
+  performer           String
+  sources             String
+  comments            String
+  tags                String[]
+  song_duration       Int
+  tracks              Track[]
+  discord             Boolean
+  website             Boolean
+  editor_channel      Boolean
+  discord_message_id  String?
+  discord_link        String?
+  website_file_path   String?
+  website_link        String?
+  editor_channel_id   String?
+  editor_channel_link String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  user                User     @relation("UserFiles", fields: [editor_discord_id], references: [discord_id])
+}
+
+model Track {
+  id         Int      @id @default(autoincrement())
+  order      Int
+  name       String
+  instrument String
+  modifier   Int
+  fileId     Int
+  file       File     @relation(fields: [fileId], references: [id])
+}

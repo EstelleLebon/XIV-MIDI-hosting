@@ -1,0 +1,27 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "main": "src/app.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/app.ts",
+    "start": "tsx app.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^22.13.11",
+    "nodemon": "^3.1.9",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.5.0",
+    "fastify": "^5.2.1",
+    "fastify-type-provider-zod": "^4.0.2",
+    "winston": "^3.17.0",
+    "zod": "^3.24.2"
+  }
+}
