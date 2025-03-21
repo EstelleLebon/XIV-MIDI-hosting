@@ -32,6 +32,7 @@ export async function updateUser(app: FastifyTypedInstance) {
                 editor_role,
             } = request.body;
 
+            console.log('Users - PUT - Request body:', request.body);
             // Filtrer les champs optionnels qui sont undefined
             const dataToUpdate = {
                 ...(discord_name !== undefined && { discord_name }),
@@ -40,20 +41,15 @@ export async function updateUser(app: FastifyTypedInstance) {
                 ...(admin !== undefined && { admin }),
                 ...(editor_role !== undefined && { editor_role }),
             };
-
-            try {
-                const user = await prisma.user.update({
-                    where: {
-                        discord_id: discord_id,
-                    },
-                    data: dataToUpdate,
-                });
-
-                return reply.status(200).send({ message: JSON.stringify(user) });
-            } catch (error) {
-                console.error(error);
-                return reply.status(500).send({ error: 'Error updating user' });
-            }
+            console.log('Users - PUT - Data to update:', dataToUpdate);
+            const user = await prisma.user.update({
+                where: {
+                    discord_id: discord_id,
+                },
+                data: dataToUpdate,
+            });
+            console.log('Users - PUT - User updated:', user);
+            return reply.status(200).send({ message: JSON.stringify(user) });
         },
     );
 }

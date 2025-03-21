@@ -41,6 +41,8 @@ export async function addUser(app: FastifyTypedInstance) {
 				editor_role,
 			} = request.body;
 
+			console.log('Users - POST - Request body:', request.body);
+
 			const user = await prisma.user.create({
 				data: {
 					discord_id,
@@ -52,7 +54,8 @@ export async function addUser(app: FastifyTypedInstance) {
 				},
 			});
 
-			return reply.status(201).send({ message: JSON.stringify(user) });
+			console.log('Users - POST - User created:', user);
+			return reply.status(201).send(user);
 		},			
 	);
 }

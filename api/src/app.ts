@@ -9,6 +9,8 @@ import {
 } from 'fastify-type-provider-zod';
 import { initDatabaseConnection } from './shared/infra/database.ts';
 import { usersPrivateRoutes } from './http/controllers/users/routes/index.ts';
+import { filesPublicRoutes } from './http/controllers/files/routes/public/index.ts';
+import { filesPrivateRoutes } from './http/controllers/files/routes/private/index.ts';
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -30,11 +32,10 @@ app.get('/', () => {
 
 // private api routes
 if (process.env.public == 'true') {
-	// app.register(filesPublicRoutes);
-	const o = 'o';
+	app.register(filesPublicRoutes);
 } else {
 	app.register(usersPrivateRoutes);
-	// app.register(filesPrivateRoutes);
+	app.register(filesPrivateRoutes);
 }
 
 // this handles the errors globally

@@ -29,13 +29,13 @@ export async function listUser(app: FastifyTypedInstance) {
 
 		async (request, reply) => {
 			const { discord_id } = request.params;
-
+			console.log('Users - GET - Request params:', request.params);
 			const user = await prisma.user.findUnique({
 				where: {
 					discord_id: discord_id,
 				},
 			});
-
+			console.log('Users - GET - User found:', user);
 			return reply.status(200).send({ message: JSON.stringify(user) });
 		},
 	);

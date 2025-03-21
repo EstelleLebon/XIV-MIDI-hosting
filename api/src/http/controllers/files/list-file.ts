@@ -3,16 +3,16 @@ import { FastifyTypedInstance } from '../../../types.ts';
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
-export async function deleteUser(app: FastifyTypedInstance) {
-	app.delete(
-		'/users/:discord_id',
+export async function listFile(app: FastifyTypedInstance) {
+	app.get(
+		'/files/:md5',
 		{
 			onRequest: [],
 			schema: {
-				tags: ['users'],
-				description: 'Delete a single user',
+				tags: ['files'],
+				description: 'List one file from md5',
 				params: z.object({
-					discord_id: z.string(),
+					md5: z.string(),
 				}),
 				// response: {
 				//   200: z
@@ -27,15 +27,15 @@ export async function deleteUser(app: FastifyTypedInstance) {
 		},
 
 		async (request, reply) => {
-			const { discord_id } = request.params;
-			console.log('Users - DELETE - Request params:', request.params);
-			await prisma.user.delete({
+			const { md5 } = request.params;
+			console.log('Files - GET - Request params:', request.params);
+			const file = await prisma.file.findUnique({
 				where: {
-					discord_id: discord_id,
+					md5: md5,
 				},
 			});
-			console.log('Users - DELETE - User deleted:', discord_id);
-			return reply.status(200).send({ message: 'User deleted' });
+			console.log('Files - GET - File found:', file);
+			return reply.status(200).send({ message: JSON.stringify(file) });
 		},
 	);
 }

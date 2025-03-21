@@ -1,7 +1,7 @@
 import { FastifyTypedInstance } from '../../../../../types.ts';
 
-import { listFiles } from '../http/controllers/files/list-files.ts';
-import { listFile } from '../http/controllers/files/list-file.ts';
+import { listFiles } from '../../list-files.ts';
+import { listFile } from '../../list-file.ts';
 
 
 export function filesPublicRoutes(app: FastifyTypedInstance) {
