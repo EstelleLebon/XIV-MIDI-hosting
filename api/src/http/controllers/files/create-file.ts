@@ -139,9 +139,7 @@ export async function createFile(app: FastifyTypedInstance) {
 					editor_channel_link,
 				},
 			});
-
-			console.log('Files - POST - Created file:', file);
-
+			
 			return reply.status(201).send(file);
 		},
 	);
