@@ -137,6 +137,8 @@ export async function createFile(app: FastifyTypedInstance) {
 					website_link,
 					editor_channel_id,
 					editor_channel_link,
+					createdAt: new Date(),
+					updatedAt: new Date(),
 				},
 			});
 			

@@ -121,6 +121,7 @@ export async function updateFile(app: FastifyTypedInstance) {
 				...(website_link !== undefined && { website_link }),
 				...(editor_channel_id !== undefined && { editor_channel_id }),
 				...(editor_channel_link !== undefined && { editor_channel_link }),
+				updatedAt: new Date(),
 			};
 
 			console.log('Files - PUT - Data to update:', dataToUpdate);
