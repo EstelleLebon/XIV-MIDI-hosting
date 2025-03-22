@@ -14,15 +14,12 @@ export async function listFile(app: FastifyTypedInstance) {
 				params: z.object({
 					md5: z.string(),
 				}),
-				// response: {
-				//   200: z
-				//     .object({
-				//       name: z.string(),
-				//       discordUserId: z.string(),
-				//     })
-				//     .nullable()
-				//     .optional(),
-				// },
+
+				response: {
+					200: z.object({
+						message: z.string(),
+					}),
+				},
 			},
 		},
 
