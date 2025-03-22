@@ -2,7 +2,7 @@ api-lb
 database
 database-api-special
 watcher
-**/.env
+**/*.env
 **/node_modules
 **/package-lock.json
 **/.dockerignore
