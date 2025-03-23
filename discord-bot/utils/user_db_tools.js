@@ -74,16 +74,20 @@ const update_user = async (user) => {
     user.admin = Boolean(user.admin);
     user.editor_role = Boolean(user.editor_role);
     try {
-        const response = await axios.put(`${discordbdd}/users/`, user, {
+        const response = await axios.put(`${discordbdd}/users`, user, {
             family: 4 // Force IPv4
         });
 
         return response.data;
     } catch (error) {
         console.error('Error updating user:', error.response ? error.response.data : error.message);
+        if (error.response && error.response.data && error.response.data.details && error.response.data.details.issues) {
+            console.error('Validation issues:', error.response.data.details.issues);
+        }
+        console.error('User data:', user);
         throw error.response ? error.response.data : error.message;
     }
-}
+};
 
 // router.delete('/:id', deleteUser);
 const delete_user = async (discord_id) => {
