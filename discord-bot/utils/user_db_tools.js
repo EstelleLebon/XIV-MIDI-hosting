@@ -74,7 +74,7 @@ const update_user = async (user) => {
     user.admin = Boolean(user.admin);
     user.editor_role = Boolean(user.editor_role);
     try {
-        const response = await axios.put(`${discordbdd}/users/`, user, {
+        const response = await axios.put(`${discordbdd}/users`, user, {
             family: 4 // Force IPv4
         });
 

@@ -36,7 +36,7 @@ export async function listUser(app: FastifyTypedInstance) {
 				},
 			});
 			console.log('Users - GET - User found:', user);
-			return reply.status(200).send({ message: JSON.stringify(user) });
+			return reply.status(200).send(user);
 		},
 	);
 }
