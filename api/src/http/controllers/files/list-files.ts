@@ -107,6 +107,8 @@ export async function listFiles(app: FastifyTypedInstance) {
                 website_link: z.string().nullable(),
                 editor_channel_id: z.string().nullable(),
                 editor_channel_link: z.string().nullable(),
+                createdAt: z.date(),
+                updatedAt: z.date(),
               },
             )),
             totalPages: z.number(),
