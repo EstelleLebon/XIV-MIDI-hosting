@@ -1,0 +1,12 @@
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+2025-03-30T17:15:02.264Z [BOT] info: Starting the bot...
+2025-03-30T17:15:02.429Z [BOT] warn: The command at /home/dev/0/3-dev/discord-bot-2/src/commands/upload/upload-editor.js is missing a required "data" or "execute" property.
+2025-03-30T17:15:02.434Z [BOT] warn: The command at /home/dev/0/3-dev/discord-bot-2/src/commands/upload/upload.js is missing a required "data" or "execute" property.

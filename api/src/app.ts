@@ -58,6 +58,7 @@ if (process.env.public == 'true') {
 app.setErrorHandler((error, request, reply) => {
   // handle validation errors
   if (hasZodFastifySchemaValidationErrors(error)) {
+    console.log('error', 'Validation error', error.validation);
     return reply.code(400).send({
       error: 'Response Validation Error',
       message: "Request doesn't match the schema",

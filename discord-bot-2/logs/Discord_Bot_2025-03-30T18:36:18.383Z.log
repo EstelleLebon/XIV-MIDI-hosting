@@ -1,0 +1,37 @@
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+2025-03-30T18:32:56.015Z [BOT] info: Starting the bot...
+2025-03-30T18:32:56.180Z [BOT] debug: Command upload-editor loaded from /home/dev/0/3-dev/discord-bot-2/src/commands/upload/upload-editor.js
+2025-03-30T18:32:56.185Z [BOT] debug: Command upload loaded from /home/dev/0/3-dev/discord-bot-2/src/commands/upload/upload.js
+2025-03-30T18:32:56.255Z [BOT] info: HTTP server listening on port 4444
+2025-03-30T18:32:56.877Z [BOT] debug: Client is ready: true
+2025-03-30T18:32:56.877Z [BOT] info: Ready! Logged in as XIV-repository-C#3393
+2025-03-30T18:33:02.788Z [Upload-Command] info: Upload command executed by estellelebon in Xiv-Midi-Library-Test
+2025-03-30T18:33:02.788Z [Upload-Command] debug: User ID: 514764375106781194
+2025-03-30T18:33:02.788Z [Upload-Command] debug: Channel ID: 1304894267981959286
+2025-03-30T18:33:02.990Z [Upload-Command] debug: Starting upload process...
+2025-03-30T18:33:02.996Z [BOT] error: undefined
+2025-03-30T18:33:02.991Z [Upload-Class] info: Processing upload [Editor role: true]
+2025-03-30T18:33:02.994Z [User-Class] info: Initializing user null
+2025-03-30T18:33:02.992Z [Upload-Class] debug: Initializing error class
+2025-03-30T18:33:02.992Z [Upload-Class] debug: Interaction: /upload-editor midi:1355973110905569330 band-size:Quartet artist:test title:test push-options:website + discord + editor channel
+2025-03-30T18:33:02.992Z [Upload-Class] debug: Logger: [object Object]
+2025-03-30T18:33:02.992Z [Upload-Class] debug: Stream: new
+2025-03-30T18:33:02.992Z [Upload-Class] debug: Creating new stream
+2025-03-30T18:33:02.993Z [Upload-Class] debug: Getting random seed
+2025-03-30T18:33:02.993Z [Upload-Class] debug: Random seed: ERR000000000000000003020251833020000
+2025-03-30T18:33:02.993Z [Upload-Class] debug: Stream ID: ERR000000000000000003020251833020000
+2025-03-30T18:33:02.993Z [Upload-Class] debug: Session created
+2025-03-30T18:33:02.995Z [User-Class] debug: Initializing error class
+2025-03-30T18:33:02.995Z [User-Class] debug: Interaction: /upload-editor midi:1355973110905569330 band-size:Quartet artist:test title:test push-options:website + discord + editor channel
+2025-03-30T18:33:02.995Z [User-Class] debug: Logger: [object Object]
+2025-03-30T18:33:02.995Z [User-Class] debug: Stream: ERR000000000000000003020251833020000
+2025-03-30T18:33:02.995Z [User-Class] debug: Stream already exists
+2025-03-30T18:33:02.995Z [User-Class] debug: Stream: ERR000000000000000003020251833020000

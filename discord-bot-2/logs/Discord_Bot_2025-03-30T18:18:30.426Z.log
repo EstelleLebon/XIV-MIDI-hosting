@@ -1,0 +1,15 @@
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+2025-03-30T18:16:59.753Z [BOT] info: Starting the bot...
+2025-03-30T18:16:59.920Z [BOT] debug: Command upload-editor loaded from /home/dev/0/3-dev/discord-bot-2/src/commands/upload/upload-editor.js
+2025-03-30T18:16:59.925Z [BOT] debug: Command upload loaded from /home/dev/0/3-dev/discord-bot-2/src/commands/upload/upload.js
+2025-03-30T18:16:59.996Z [BOT] info: HTTP server listening on port 4444
+2025-03-30T18:17:00.733Z [BOT] debug: Client is ready: true
+2025-03-30T18:17:00.733Z [BOT] info: Ready! Logged in as XIV-repository-C#3393

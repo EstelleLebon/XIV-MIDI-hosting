@@ -1,0 +1,34 @@
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+2025-03-30T18:36:18.435Z [BOT] info: Starting the bot...
+2025-03-30T18:36:18.585Z [BOT] debug: Command upload-editor loaded from /home/dev/0/3-dev/discord-bot-2/src/commands/upload/upload-editor.js
+2025-03-30T18:36:18.591Z [BOT] debug: Command upload loaded from /home/dev/0/3-dev/discord-bot-2/src/commands/upload/upload.js
+2025-03-30T18:36:18.663Z [BOT] info: HTTP server listening on port 4444
+2025-03-30T18:36:19.356Z [BOT] debug: Client is ready: true
+2025-03-30T18:36:19.357Z [BOT] info: Ready! Logged in as XIV-repository-C#3393
+2025-03-30T18:36:24.789Z [Upload-Command] info: Upload command executed by estellelebon in Xiv-Midi-Library-Test
+2025-03-30T18:36:24.789Z [Upload-Command] debug: User ID: 514764375106781194
+2025-03-30T18:36:24.790Z [Upload-Command] debug: Channel ID: 1304894267981959286
+2025-03-30T18:36:25.384Z [Upload-Command] debug: Starting upload process...
+2025-03-30T18:36:25.391Z [BOT] error: undefined
+2025-03-30T18:36:25.385Z [Upload-Class] info: Processing upload [Editor role: true]
+2025-03-30T18:36:25.389Z [User-Class] info: Initializing user...
+2025-03-30T18:36:25.386Z [Upload-Class] debug: Initializing error class
+2025-03-30T18:36:25.386Z [Upload-Class] debug: Stream: new
+2025-03-30T18:36:25.386Z [Upload-Class] debug: Creating new stream
+2025-03-30T18:36:25.387Z [Upload-Class] debug: Getting random seed
+2025-03-30T18:36:25.387Z [Upload-Class] debug: Random seed: ERR000000000000000003020251836250000
+2025-03-30T18:36:25.387Z [Upload-Class] debug: Stream ID: ERR000000000000000003020251836250000
+2025-03-30T18:36:25.388Z [Upload-Class] debug: Session created
+2025-03-30T18:36:25.390Z [User-Class] debug: Initializing error class
+2025-03-30T18:36:25.390Z [User-Class] debug: Stream: ERR000000000000000003020251836250000
+2025-03-30T18:36:25.390Z [User-Class] debug: Joining existing stream
+2025-03-30T18:36:25.390Z [User-Class] debug: Stream already exists
+2025-03-30T18:36:25.390Z [User-Class] debug: Stream: ERR000000000000000003020251836250000

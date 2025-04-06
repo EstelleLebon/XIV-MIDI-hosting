@@ -1,0 +1,31 @@
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+2025-03-30T18:21:13.791Z [BOT] info: Starting the bot...
+2025-03-30T18:21:13.930Z [BOT] debug: Command upload-editor loaded from /home/dev/0/3-dev/discord-bot-2/src/commands/upload/upload-editor.js
+2025-03-30T18:21:13.940Z [BOT] debug: Command upload loaded from /home/dev/0/3-dev/discord-bot-2/src/commands/upload/upload.js
+2025-03-30T18:21:14.018Z [BOT] info: HTTP server listening on port 4444
+2025-03-30T18:21:14.603Z [BOT] debug: Client is ready: true
+2025-03-30T18:21:14.604Z [BOT] info: Ready! Logged in as XIV-repository-C#3393
+2025-03-30T18:21:20.247Z [Upload-Command] info: Upload command executed by estellelebon in Xiv-Midi-Library-Test
+2025-03-30T18:21:20.248Z [Upload-Command] debug: User ID: 514764375106781194
+2025-03-30T18:21:20.248Z [Upload-Command] debug: Channel ID: 1304894267981959286
+2025-03-30T18:21:20.441Z [Upload-Command] debug: Starting upload process...
+2025-03-30T18:21:20.450Z [BOT] error: undefined
+2025-03-30T18:21:20.442Z [Upload-Class] info: Processing upload [Editor role: true]
+2025-03-30T18:21:20.447Z [User-Class] info: Initializing user null
+2025-03-30T18:21:20.443Z [Upload-Class] debug: Initializing error class
+2025-03-30T18:21:20.443Z [Upload-Class] debug: Interaction: /upload-editor midi:1355970164470059058 band-size:Quartet artist:test title:test push-options:website + discord + editor channel
+2025-03-30T18:21:20.444Z [Upload-Class] debug: Logger: [object Object]
+2025-03-30T18:21:20.444Z [Upload-Class] debug: Stream: new
+2025-03-30T18:21:20.444Z [Upload-Class] debug: Creating new stream
+2025-03-30T18:21:20.445Z [Upload-Class] debug: Getting random seed
+2025-03-30T18:21:20.445Z [Upload-Class] debug: Random seed: ERR000000000000000003020251821200000
+2025-03-30T18:21:20.449Z [Upload-Class] debug: Stream ID: ERR000000000000000003020251821200000
+2025-03-30T18:21:20.450Z [Upload-Class] debug: Session created

@@ -1,0 +1,31 @@
+{
+  "name": "discord_bot",
+  "version": "1.0.0",
+  "main": "bot.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "bot": "node src/bot.js",
+    "deploy": "node src/deploy-commands.js",
+    "devbot": "env $(cat .env | xargs) nodemon src/bot.js",
+    "devdeploy": "env $(cat .env | xargs) node src/deploy-commands.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "adm-zip": "^0.5.16",
+    "axios": "^1.7.7",
+    "discord.js": "^14.16.3",
+    "express": "^4.21.2",
+    "fs": "^0.0.1-security",
+    "midi-file-parser": "^1.0.0",
+    "node-cron": "^3.0.3",
+    "path": "^0.12.7",
+    "winston": "^3.16.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.9"
+  }
+}

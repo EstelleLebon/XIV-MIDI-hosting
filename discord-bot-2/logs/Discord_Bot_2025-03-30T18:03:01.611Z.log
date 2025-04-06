@@ -1,0 +1,19 @@
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+2025-03-30T17:58:32.657Z [BOT] info: Starting the bot...
+2025-03-30T17:58:32.818Z [BOT] debug: Command upload-editor loaded from /home/dev/0/3-dev/discord-bot-2/src/commands/upload/upload-editor.js
+2025-03-30T17:58:32.827Z [BOT] debug: Command upload loaded from /home/dev/0/3-dev/discord-bot-2/src/commands/upload/upload.js
+2025-03-30T17:58:32.901Z [BOT] info: HTTP server listening on port 4444
+2025-03-30T17:58:33.599Z [BOT] debug: Client is ready: true
+2025-03-30T17:58:33.600Z [BOT] info: Ready! Logged in as XIV-repository-C#3393
+2025-03-30T18:00:03.063Z [Upload-Command] info: Upload command executed by estellelebon in Xiv-Midi-Library-Test
+2025-03-30T18:00:03.063Z [Upload-Command] debug: User ID: 514764375106781194
+2025-03-30T18:00:03.064Z [Upload-Command] debug: Channel ID: 1304894267981959286
+2025-03-30T18:00:03.492Z [BOT] info: Command upload-editor executed by estellelebon
