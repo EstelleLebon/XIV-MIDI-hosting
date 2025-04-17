@@ -18,7 +18,7 @@ const createLogger = (moduleName) => {
                 )
             }),
             new winston.transports.File({ 
-                filename: './logs/Discord_Bot.log',
+                filename: '/usr/src/app/src/logs/Discord_Bot.log',
                 format: winston.format.combine(
                     winston.format.label({ label: moduleName }),
                     winston.format.timestamp(),

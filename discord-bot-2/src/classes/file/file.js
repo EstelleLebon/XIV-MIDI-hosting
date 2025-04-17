@@ -4,13 +4,14 @@ import fs from "node:fs/promises";
 import path from "path";
 const discordbdd = process.env.discordbdd;
 import createLogger from "../logger/logger.js";
-// import error from "../error/error.js";
+import error from "../error/error.js";
 import MidiFile from "../midifile/midifile.js";
+import dbcheck from "../dbcheck/dbcheck.js";
 
 class File {
-	constructor(interaction, stream = null) {
+	constructor(interaction, error = null) {
 		this.interaction = interaction; // Clone the interaction object
-		this.stream = stream;
+		this.error = error;
 		this.logger = createLogger('File-Class');
 
 		this.filename = null;
@@ -37,6 +38,7 @@ class File {
 
 		this.existfile = false;
 		this.pushes = { discord: 0, website: 0, editor: 0, };
+		this.userpushes = { discord: 0, website: 0, editor: 0, };
 		this.initialized = false;
 		this.buffer = null;
 		this.filename = null;
@@ -51,7 +53,13 @@ class File {
 
 	async init() {
 		// Init error stream
-		// this.error = new error(this.interaction, this.logger, this.stream);
+		if (!this.error) {
+			this.error = new error(this.logger);
+			this.error.init();
+			this.logger.debug(`[INIT] ErrorClass initialized`);
+		}
+
+
 		this.logger.info(`[INIT] Initializing file class`);
 
 		// Init buffer
@@ -86,7 +94,7 @@ class File {
 
 		// Init MidiFile object
 		this.logger.debug(`[INIT] Initializing MidiFile class`);
-		this.midifile = new MidiFile(this.buffer, this.stream);
+		this.midifile = new MidiFile(this.buffer, this.error);
 		await this.midifile.init();
 		await this.midifile.init_track_map();
 
@@ -107,7 +115,7 @@ class File {
 
 		// Get final pushes
 		this.logger.debug(`[INIT] Getting final pushes`);
-		this.pushes = await this.init_final_pushes();
+		await this.init_final_pushes();
 		this.logger.debug(`[INIT] Final pushes: ${JSON.stringify(this.pushes)}`);
 
 		// Get filename
@@ -430,30 +438,44 @@ class File {
 			const pushes = this.interaction.options.getString('push-options');
 			if (!pushes) {
 				this.logger.debug(`[init_final_pushes] Pushes are null`);
+				this.userpushes.website = -1;
 				this.pushes.website = -3;
+				this.userpushes.editor = -1;
 				this.pushes.editor = -3;
+				this.userpushes.discord = 1;
 				this.discord = true;
-				return this.pushes;
+				return;
 			}
 
 			this.logger.debug(`[init_final_pushes] Pushes: ${pushes}`);
 			if (! pushes.includes('discord')) {
-				this.pushes.discord = -2;
+				this.userpushes.discord = -2;
 			} else {
-				this.discord = true;
+				this.userpushes.discord = 1;
 			}
 			if (! pushes.includes('website')) {
-				this.pushes.website = -2;
+				this.userpushes.website = -2;
 			} else {
-				this.website = true;
+				this.userpushes.website = 1;
 			}
 			if (! pushes.includes('editor channel')) {
-				this.pushes.editor = -2;
+				this.userpushes.editor = -2;
 			} else {
-				this.editor_channel = true;
+				this.userpushes.editor = 1;
 			}
-			return this.pushes;
+
+			if (this.userpushes.discord == -2) {
+				this.pushes.discord = -3;
+			}
+			if (this.userpushes.website == -2) {
+				this.pushes.website = -3;
+			}
+			if (this.userpushes.editor == -2) {
+				this.pushes.editor = -3;
+			}
+			
 		}
+		return;
 	}
 
 	async init_filename() {
@@ -466,18 +488,25 @@ class File {
 	async push(preview) {
 		this.logger.info(`[push] Pushing file`);
 
-		if (this.discord) {
-			await this.push_discord(preview);
+		// Perform all push operations asynchronously in parallel
+		const pushPromises = [];
+
+		if (this.pushes.discord > 0) {
+			pushPromises.push(this.push_discord(preview));
 		}
 
-		if (this.website) {
-			await this.push_website(preview);
+		if (this.pushes.website > 0) {
+			pushPromises.push(this.push_website(preview));
 		}
 
-		if (this.editor_channel) {
-			await this.push_editor_channel(preview);
+		if (this.pushes.editor > 0) {
+			pushPromises.push(this.push_editor_channel(preview));
 		}
 
+		// Wait for all push operations to complete
+		await Promise.all(pushPromises);
+
+		// Push to the database after all other pushes are complete
 		await this.push_database(preview);
 
 		this.pushed = true;
@@ -486,6 +515,7 @@ class File {
 
 	async push_discord(preview) {
 		this.logger.info(`[push_discord] Pushing file to discord`);
+		await preview.embed.updateEmbedField('discord push:', 'Uploading...');
 		const uploadMap = {
 			"solo": process.env.solo,
 			"duet": process.env.duo,
@@ -524,7 +554,7 @@ class File {
 			this.logger.error(`[push_discord] Error getting channel: ${error}`);
 		}
 
-		let message = `New ${this.performer} uploaded by ${this.editor}:`;
+		let message = `New ${this.performer} uploaded by <@${this.editor_discord_id}>:`;
 		message += `\n**Artist:** ${this.artist}`;
 		message += `\n**Title:** ${this.title}`;
 		if (this.sources != null && this.sources != undefined && this.sources != '' && this.sources != ' ') {
@@ -559,6 +589,7 @@ class File {
 	}
 
 	async push_website(preview) {
+		await preview.embed.updateEmbedField('website push:', 'Uploading...');
 		switch (this.performer.toLowerCase()) {
 			case "solo":
 				this.website_file_path = `/files/1_solos/${this.filename}`;
@@ -651,7 +682,7 @@ class File {
 				perfo = "/8_octets";
 				break;
 			default:
-				throw new Error(`Unknown performer type: ${this.performer}`);
+				this.logger.error(`Unknown performer type: ${this.performer}`);
 				break;
 		}
 		this.logger.debug(`[push_website_file] Sendpath: ${sendpath}`);
@@ -706,8 +737,20 @@ class File {
 	}
 
 	async push_editor_channel(preview) {
+		await preview.embed.updateEmbedField('editor channel push:', 'Uploading...');
 		const client = await import('../../bot.js');
 		const channel = await client.default.channels.fetch(this.editor_channel_id);
+
+		let duration = "";
+		this.logger.debug(`File duration: ${this.song_duration}`);
+		if (this.song_duration) {
+			const minutes = String(Math.floor(Number(this.song_duration) / 60));
+			const seconds = String(Number(Math.floor(this.song_duration)) % 60);
+			duration = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+		} else {
+			duration = "0:00";
+		}
+		this.logger.debug(`Duration: ${duration}`);
 
 		let message = `New ${this.performer} uploaded:`;
 		message += `\n**Artist:** ${this.artist}`;
@@ -721,7 +764,7 @@ class File {
 		if (this.tags != null && this.tags != undefined && this.tags.length > 0) {
 			message += `\n**Tags:** ${this.tags.join(', ')}`;
 		}
-		message += `\n**Duration:** ${this.song_duration}`;
+		message += `\n**Duration:** ${duration}`;
 		if (this.tracks != null && this.tracks != undefined && this.tracks.length > 0) {
 			const tpm = [];
 			let i = 1;
@@ -735,15 +778,26 @@ class File {
 		const messagesent = await channel.send({ content: message, files: [{ attachment: this.buffer, name: this.filename }] });
 		this.editor_channel_link = messagesent.url;
 
-		await preview.embed.updateEmbedField('Editor Channel Push:', `[link](${this.discord_link})`);
+		await preview.embed.updateEmbedField('Editor Channel Push:', `[link](${this.editor_channel_link})`);
 		await preview.updatePreview();
 
 		this.editor_channel_pushed = true;
 		this.editor_channel = true;
 	}
 
-	async push_database() {
+	async push_database(preview) {
 		this.logger.debug(`[push_database] Pushing file to database`);
+
+		// check db status
+		const db = new dbcheck();
+		const dbStatus = await db.check();
+		if (!dbStatus) {
+			this.logger.error('Database is down, aborting delete user.');
+			return;
+		}
+
+		this.logger.debug(`[push_database] File: ${this.filename}`);
+
 		const data = {
 			md5: this.md5,
 			editor_discord_id: this.editor_discord_id,
@@ -761,27 +815,49 @@ class File {
 				instrument: track.instrument,
 				modifier: Number(track.modifier),
 			})),
-			discord: this.discord,
-			website: this.website,
-			editor_channel: this.editor_channel,
-			discord_message_id: this.discord_message_id,
-			discord_link: this.discord_link,
-			website_file_path: this.website_file_path,
-			website_link: this.website_link,
-			editor_channel_id: this.editor_channel_id,
-			editor_channel_link: this.editor_channel_link,
+			discord: this.discord ? true : false,
+			website: this.website ? true : false,
+			editor_channel: this.editor_channel ? true : false,
 		};
+
+		if (this.discord_message_id) {
+			data.discord_message_id = this.discord_message_id;
+		}
+		if (this.discord_link) {
+			data.discord_link = this.discord_link;
+		}
+		if (this.website_file_path) {
+			data.website_file_path = this.website_file_path;
+		}
+		if (this.website_link) {
+			data.website_link = this.website_link;
+		}
+		if (this.editor_channel_id) {
+			data.editor_channel_id = this.editor_channel_id;
+		}
+		if (this.editor_channel_link) {
+			data.editor_channel_link = this.editor_channel_link;
+		}
+
 		this.logger.debug(`[push_database] Data: ${JSON.stringify(data, null, 2)}`);
 		if (this.existfile) {
+			delete data.editor_discord_id;
+			delete data.tracks;
 			this.logger.debug(`[push_database] File already exists, updating`);
 			const response = await axios.put(`${discordbdd}/files`, data)
-				.catch((error) => {
+				.catch(async (error) => {
 					this.logger.error(`[push_database] Error pushing file to database: ${error}`);
+					clearInterval(preview.upload_interval);
+					await preview.embed.updateEmbedField('Status: ', 'Failed');
+					await preview.updatePreview();
 					return null;
 				});
 			this.logger.debug(`[push_database] Response: ${response}`);
 			if (!response.data) {
 				this.logger.error(`[push_database] Error pushing file to database: ${response}`);
+				clearInterval(preview.upload_interval);
+				await preview.embed.updateEmbedField('Status: ', 'Failed');
+				await preview.updatePreview();
 				return null;
 			}
 			this.databasepushed = true;
@@ -789,20 +865,33 @@ class File {
 
 		} else {
 			this.logger.debug(`[push_database] File does not exist, creating`);
-		
 			const response = await axios.post(`${discordbdd}/files`, data)
-				.catch((error) => {
+				.catch(async (error) => {
 					this.logger.error(`[push_database] Error pushing file to database: ${error}`);
+					clearInterval(preview.upload_interval);
+					await preview.embed.updateEmbedField('Status: ', 'Failed');
+					await preview.updatePreview();
 					return null;
 				});
 			this.logger.debug(`[push_database] Response: ${response}`);
 			if (!response.data) {
 				this.logger.error(`[push_database] Error pushing file to database: ${response}`);
+				clearInterval(preview.upload_interval);
+				await preview.embed.updateEmbedField('Status: ', 'Failed');
+				await preview.updatePreview();
 				return null;
 			}
+
+			
+
 			this.databasepushed = true;
 			this.logger.debug(`[push_database] File pushed to database`);
 		}
+
+		this.logger.debug(`[push_database] Clearing interval`);
+		clearInterval(preview.upload_interval);
+		await preview.embed.updateEmbedField('Status: ', 'Success');
+		await preview.updatePreview();
 	}
 
 	
@@ -815,6 +904,17 @@ class File {
 
 	async get_files(query) {
 		this.logger.info(`[get_files] Getting files from database`);
+
+		// check db status
+		const db = new dbcheck();
+		const dbStatus = await db.check();
+		if (!dbStatus) {
+			this.logger.error('Database is down, aborting delete user.');
+			return;
+		}
+
+		this.logger.debug(`[get_files] Query: ${JSON.stringify(query)}`);
+
 		const filter = await this.build_query_string(query);
 		this.logger.debug(`[get_files] URL: ${discordbdd}/files?${filter}`);
 		const response = await axios.get(`${discordbdd}/files?${filter}`)
@@ -851,7 +951,7 @@ class File {
 			this.logger.error(`[get_file_and_init] Error getting file from database`);
 			return null;
 		}
-		this.logger.debug(`[get_file_and_init] File: ${JSON.stringify(response)}`);
+		this.logger.debug(`[get_file_and_init] File: ${JSON.stringify(response, null, 2)}`);
 
 		this.md5 = response.md5;
 		this.editor_discord_id = response.editor_discord_id;
@@ -871,7 +971,8 @@ class File {
 		this.website_file_path = (response.website_file_path != undefined && response.website_file_path != null) ? response.website_file_path : null;
 		this.website_link = (response.website_link != undefined && response.website_link != null) ? response.website_link : null;
 		this.editor_channel_id = (response.editor_channel_id != undefined && response.editor_channel_id != null) ? response.editor_channel_id : null;
-		this.editor_channel_link = (response.editor_channel_link != undefined && response.editor_channel_link != null) ? response.data.editor_channel_link : null;
+		this.editor_channel_link = (response.editor_channel_link != undefined && response.editor_channel_link != null) ? response.editor_channel_link : null;
+		this.logger.debug(`[get_file_and_init] File initialized from database`);
 	}
 
 	toJSON() {

@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from "discord.js";
 import createLogger from "../../classes/logger/logger.js";
 import Upload from "../../classes/upload/upload.js";
+import dbcheck from "../../classes/dbcheck/dbcheck.js";
 
 const logger = createLogger('Upload-Command');
 
@@ -64,6 +65,15 @@ const execute = async (interaction) => {
     logger.debug(`User ID: ${interaction.user.id}`);
     logger.debug(`Channel ID: ${interaction.channel.id}`);
     await interaction.deferReply({ ephemeral: true });
+
+    // check if db is up
+    const db = new dbcheck();
+    const dbStatus = await db.check();
+    if (!dbStatus) {
+        logger.error('Database is down, aborting upload.');
+        return interaction.editReply({ content: 'Database is down, please try again later.', ephemeral: true });
+    }
+    logger.debug(`Database status: ${dbStatus}`);
     const work = new Upload(interaction, false, null);
     logger.debug('Starting upload process...');
     await work.process();

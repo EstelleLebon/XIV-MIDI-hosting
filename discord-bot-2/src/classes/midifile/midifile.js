@@ -3,7 +3,7 @@ import createLogger from "../logger/logger.js";
 import midiFileParser from "midi-file-parser";
 
 class MidiFile {
-	constructor(buffer, stream = null) {
+	constructor(buffer, error = null) {
 		this.buffer = buffer;
 		this.data = null;
 		this.initialized = false;
@@ -12,14 +12,17 @@ class MidiFile {
 
 		this.logger = createLogger('MidiFile-Class');
 
-		this.stream = stream;
-		// this.error = null;
+		this.error = error;
 	}
 
 	async init() {
 		this.logger.debug(`[INIT] Initializing MidiFile class`);
-		// this.error = new error(null, this.logger, this.stream);
-		// this.error.init();
+		if (!this.error) {
+			this.error = new error(this.logger);
+			this.error.init();
+			this.logger.debug(`[INIT] ErrorClass initialized`);
+		}
+
 		if (!this.buffer) {
 			this.logger.error(`[INIT] Buffer is null`);
 			// this.error.add_error(`Buffer is null`);

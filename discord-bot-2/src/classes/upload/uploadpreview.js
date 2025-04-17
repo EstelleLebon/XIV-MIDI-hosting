@@ -3,14 +3,13 @@ import error from "../error/error.js";
 import { EmbedBuilder } from "@discordjs/builders";
 
 class UploadPreview {
-	constructor(interaction, editor_role, stream = null) {
+	constructor(interaction, editor_role, error = null) {
 		this.interaction = interaction;
 		this.interactionpreview = null;
 
 		this.editor_role = editor_role;
-		this.stream = stream;
 		this.logger = createLogger('UploadPreview-Class');
-		// this.error = null;
+		this.error = error;
 
 		this.collector = null;
 
@@ -36,11 +35,15 @@ class UploadPreview {
 		this.logger.debug(`User ID: ${this.user_id}`);
 		this.logger.debug(`Channel ID: ${this.channel_id}`);
 
-		// this.error = new error(this.interaction, this.logger, this.stream);
-		// this.error.init();
+
+		if (!this.error) {
+			this.error = new error(this.interaction, this.logger);
+			this.error.init();
+			this.logger.debug(`ErrorClass initialized`);
+		}
 
 		await this.createEmbed(file);
-		await this.createButtons();
+		await this.createButtons(file);
 
 	}
 	
@@ -133,19 +136,39 @@ class UploadPreview {
 		if (file.pushes.discord > 0) {
 			this.embed.addFields({name: "Discord Push:",value: "Enable",inline: true})
 		} else {
-			this.embed.addFields({name: "Discord Push:",value: "Already exists",inline: true})
+			if (file.pushes.discord == -3) {
+				this.embed.addFields({name: "Discord Push:",value: "Disabled",inline: true})
+			} else {
+				this.embed.addFields({name: "Discord Push:",value: `[Already exists](${file.discord_link})`,inline: true})
+			}
 		}
 
 		if (this.editor_role) {
 			if (file.pushes.website > 0) {
 				this.embed.addFields({name: "Website Push:",value: "Enable",inline: true})
 			} else {
-				this.embed.addFields({name: "Website Push:",value: "Already exists",inline: true})
+				if (file.pushes.website == -3) {
+					if (this.website == true) {
+						this.embed.addFields({name: "Website Push:",value: `[Already exists](${process.env.websiteurl.slice(0, -1) + file.website_link})`,inline: true})
+					} else {
+						this.embed.addFields({name: "Website Push:",value: "Disabled",inline: true})
+					}
+				} else {
+					this.embed.addFields({name: "Website Push:",value: `[Already exists](${process.env.websiteurl.slice(0, -1) + file.website_link})`,inline: true});
+				}
 			}
 			if (file.pushes.editor > 0) {
-				this.embed.addFields({name: "Editor Channel Push:",value: "Enable",inline: true})
+				this.embed.addFields({name: "Editor Channel Push:",value: "Enable",inline: true});
 			} else {
-				this.embed.addFields({name: "Editor Channel Push:",value: "Already exists",inline: true})
+				if (file.pushes.editor == -3) {
+					if (this.editor_channel == true) {
+						this.embed.addFields({name: "Editor Channel Push:",value: `[Already exists](${file.editor_channel_link})`,inline: true})
+					} else {
+					this.embed.addFields({name: "Editor Channel Push:",value: "Disabled",inline: true})
+					}
+				} else {
+					this.embed.addFields({name: "Editor Channel Push:",value: `[Already exists](${file.editor_channel_link})`,inline: true});
+				}
 			}
 		}
 
@@ -163,8 +186,12 @@ class UploadPreview {
 
 	}
 
-	async createButtons() {
+	async createButtons(file) {
 		this.logger.info(`Creating buttons...`);
+		if (file.pushes.discord < 0 && file.pushes.editor < 0 && file.pushes.website < 0) {
+			this.logger.info(`File already exists everywhere`);
+			return null;
+		}
 		try {
 			this.buttons = {
 				type: 1,
@@ -204,22 +231,24 @@ class UploadPreview {
 		this.content = null;
 	}
 
-	async sendPreview() {
+	async sendPreview(file) {
 		this.logger.info(`Sending preview...`);
 		this.logger.debug(`Embed: ${JSON.stringify(this.embed)}`);
 		this.logger.debug(`Buttons: ${JSON.stringify(this.buttons)}`);
 
 		this.interactionpreview = await this.interaction.followUp({
 			content: this.content,
-			embeds: [this.embed],
-			components: [this.buttons],
+			embeds: this.embed ? [this.embed] : [],
+			components: this.buttons ? [this.buttons] : [],
 			ephemeral: true,
 		}).catch((error) => {
 			// this.error.add_error(`Error sending preview: ${error}`);
 			this.logger.error(`Error sending preview: ${error}`);
 			return false;
 		});
-		this.initCollector();
+		if (file.pushes.discord > 0 || file.pushes.editor > 0 || file.pushes.website > 0) {
+			this.initCollector();
+		}
 		this.logger.info(`Preview sent`);
 		return true;
 	}
@@ -382,11 +411,7 @@ class UploadPreview {
 		} else {
 			this.embed.spliceFields(10, 1);
 		}
-		this.embed.updateEmbedField('discord push:', 'Uploading...');
-		if (this.editor_role) {
-			this.embed.updateEmbedField('website push:', 'Uploading...');
-			this.embed.updateEmbedField('editor channel push:', 'Uploading...');
-		}
+
 		this.embed.addFields({name: "Status: ",value: `Uploading...`,inline: false})
 		await this.updatePreview();
 		let i = 0;

@@ -265,3 +265,501 @@
 2025-04-05T10:28:02.656Z - debug: [DeployCommands] Deploying commands to guild 1304894267042299934.
 2025-04-05T10:28:02.656Z - debug: [DeployCommands] Client ID: 1208425521667375145.
 2025-04-05T10:28:02.911Z - info: [DeployCommands] Successfully reloaded 2 application (/) commands.
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+2025-04-13T09:13:07.594Z - info: [DeployCommands] Starting command deployment...
+2025-04-13T09:13:07.595Z - debug: [DeployCommands] Found 3 command folders.
+2025-04-13T09:13:07.595Z - debug: [DeployCommands] Found 2 command files in folder admin.
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+2025-04-13T09:13:57.367Z - info: [DeployCommands] Starting command deployment...
+2025-04-13T09:13:57.368Z - debug: [DeployCommands] Found 3 command folders.
+2025-04-13T09:13:57.369Z - debug: [DeployCommands] Found 2 command files in folder admin.
+2025-04-13T09:13:57.381Z - info: [DeployCommands] Loaded command init-backup from file init-backup.js.
+2025-04-13T09:13:57.385Z - info: [DeployCommands] Loaded command manual-backup from file manual-backup.js.
+2025-04-13T09:13:57.386Z - debug: [DeployCommands] Found 0 command files in folder editors.
+2025-04-13T09:13:57.386Z - debug: [DeployCommands] Found 2 command files in folder upload.
+2025-04-13T09:13:57.534Z - info: [DeployCommands] Loaded command upload-editor from file upload-editor.js.
+2025-04-13T09:13:57.539Z - info: [DeployCommands] Loaded command upload from file upload.js.
+2025-04-13T09:13:57.539Z - debug: [DeployCommands] Preparing REST instance with token MTIwODQyNTUyMTY2NzM3NTE0NQ.GmXecj.dN9M1KhS_6LnLSPlpzULvd8bEevc3LBJukDttI.
+2025-04-13T09:13:57.540Z - debug: [DeployCommands] Started refreshing 4 application (/) commands.
+2025-04-13T09:13:57.541Z - debug: [DeployCommands] Commands: [
+  {
+    "options": [],
+    "name": "init-backup",
+    "description": "Initialize backup folders.",
+    "default_member_permissions": "68719476736",
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "manual-backup",
+    "description": "Backup the server manually.",
+    "default_member_permissions": "68719476736",
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "name": "midi",
+        "description": "[required] .mid file to upload.",
+        "required": true,
+        "type": 11
+      },
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "solo",
+            "value": "Solo"
+          },
+          {
+            "name": "duet",
+            "value": "Duet"
+          },
+          {
+            "name": "trio",
+            "value": "Trio"
+          },
+          {
+            "name": "quartet",
+            "value": "Quartet"
+          },
+          {
+            "name": "quintet",
+            "value": "Quintet"
+          },
+          {
+            "name": "sextet",
+            "value": "Sextet"
+          },
+          {
+            "name": "septet",
+            "value": "Septet"
+          },
+          {
+            "name": "octet",
+            "value": "Octet"
+          }
+        ],
+        "name": "band-size",
+        "description": "[required] Number of performers / tracks.",
+        "required": true
+      },
+      {
+        "type": 3,
+        "name": "artist",
+        "description": "[required] Artist of the song.",
+        "required": true
+      },
+      {
+        "type": 3,
+        "name": "title",
+        "description": "[required] Title of the song.",
+        "required": true
+      },
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "Public Discord (Solo-Octet channel)",
+            "value": "discord"
+          },
+          {
+            "name": "Editor Discord (Your own personal editor channel)",
+            "value": "editor channel"
+          },
+          {
+            "name": "Website (xivmidi.com)",
+            "value": "website"
+          },
+          {
+            "name": "Website & Public Discord",
+            "value": "website + discord"
+          },
+          {
+            "name": "Website & Editor channel",
+            "value": "website + editor channel"
+          },
+          {
+            "name": "Public Discord & Editor channel",
+            "value": "discord + editor channel"
+          },
+          {
+            "name": "All Options (Website & Public Discord & Editor Discord)",
+            "value": "website + discord + editor channel"
+          }
+        ],
+        "name": "push-options",
+        "description": "[required] Where to push the file.",
+        "required": true
+      },
+      {
+        "type": 3,
+        "name": "editor-name",
+        "description": "[optional] Enter your desired editor name (will be saved as default for future uploads).",
+        "required": false
+      },
+      {
+        "type": 3,
+        "name": "source",
+        "description": "[optional] Source of the MIDI file.",
+        "required": false
+      },
+      {
+        "type": 3,
+        "name": "comment",
+        "description": "[optional] Any additional information.",
+        "required": false
+      }
+    ],
+    "name": "upload-editor",
+    "description": "Upload MIDI files.",
+    "default_member_permissions": "68719476736",
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "name": "midi",
+        "description": "[required] .mid file to upload.",
+        "required": true,
+        "type": 11
+      },
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "solo",
+            "value": "Solo"
+          },
+          {
+            "name": "duet",
+            "value": "Duet"
+          },
+          {
+            "name": "trio",
+            "value": "Trio"
+          },
+          {
+            "name": "quartet",
+            "value": "Quartet"
+          },
+          {
+            "name": "quintet",
+            "value": "Quintet"
+          },
+          {
+            "name": "sextet",
+            "value": "Sextet"
+          },
+          {
+            "name": "septet",
+            "value": "Septet"
+          },
+          {
+            "name": "octet",
+            "value": "Octet"
+          }
+        ],
+        "name": "band-size",
+        "description": "[required] Number of performers / tracks.",
+        "required": true
+      },
+      {
+        "type": 3,
+        "name": "artist",
+        "description": "[required] Artist of the song.",
+        "required": true
+      },
+      {
+        "type": 3,
+        "name": "title",
+        "description": "[required] Title of the song.",
+        "required": true
+      },
+      {
+        "type": 3,
+        "name": "editor-name",
+        "description": "[optional] Enter your desired editor name (will be saved as default for future uploads).",
+        "required": false
+      },
+      {
+        "type": 3,
+        "name": "source",
+        "description": "[optional] Source of the MIDI file.",
+        "required": false
+      },
+      {
+        "type": 3,
+        "name": "comment",
+        "description": "[optional] Any additional information.",
+        "required": false
+      }
+    ],
+    "name": "upload",
+    "description": "Upload MIDI files.",
+    "default_member_permissions": "68719476736",
+    "type": 1
+  }
+]
+2025-04-13T09:13:57.542Z - debug: [DeployCommands] Deploying commands to guild 1304894267042299934.
+2025-04-13T09:13:57.542Z - debug: [DeployCommands] Client ID: 1208425521667375145.
+2025-04-13T09:13:57.814Z - info: [DeployCommands] Successfully reloaded 4 application (/) commands.
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+2025-04-13T09:15:00.208Z - info: [DeployCommands] Starting command deployment...
+2025-04-13T09:15:00.209Z - debug: [DeployCommands] Found 3 command folders.
+2025-04-13T09:15:00.210Z - debug: [DeployCommands] Found 2 command files in folder admin.
+2025-04-13T09:15:00.221Z - info: [DeployCommands] Loaded command init-backup from file init-backup.js.
+2025-04-13T09:15:00.225Z - info: [DeployCommands] Loaded command manual-backup from file manual-backup.js.
+2025-04-13T09:15:00.225Z - debug: [DeployCommands] Found 0 command files in folder editors.
+2025-04-13T09:15:00.226Z - debug: [DeployCommands] Found 2 command files in folder upload.
+2025-04-13T09:15:00.351Z - info: [DeployCommands] Loaded command upload-editor from file upload-editor.js.
+2025-04-13T09:15:00.356Z - info: [DeployCommands] Loaded command upload from file upload.js.
+2025-04-13T09:15:00.356Z - debug: [DeployCommands] Preparing REST instance with token MTIwODQyNTUyMTY2NzM3NTE0NQ.GmXecj.dN9M1KhS_6LnLSPlpzULvd8bEevc3LBJukDttI.
+2025-04-13T09:15:00.357Z - debug: [DeployCommands] Started refreshing 4 application (/) commands.
+2025-04-13T09:15:00.358Z - debug: [DeployCommands] Commands: [
+  {
+    "options": [],
+    "name": "init-backup",
+    "description": "Initialize backup folders.",
+    "default_member_permissions": "8",
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "manual-backup",
+    "description": "Backup the server manually.",
+    "default_member_permissions": "8",
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "name": "midi",
+        "description": "[required] .mid file to upload.",
+        "required": true,
+        "type": 11
+      },
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "solo",
+            "value": "Solo"
+          },
+          {
+            "name": "duet",
+            "value": "Duet"
+          },
+          {
+            "name": "trio",
+            "value": "Trio"
+          },
+          {
+            "name": "quartet",
+            "value": "Quartet"
+          },
+          {
+            "name": "quintet",
+            "value": "Quintet"
+          },
+          {
+            "name": "sextet",
+            "value": "Sextet"
+          },
+          {
+            "name": "septet",
+            "value": "Septet"
+          },
+          {
+            "name": "octet",
+            "value": "Octet"
+          }
+        ],
+        "name": "band-size",
+        "description": "[required] Number of performers / tracks.",
+        "required": true
+      },
+      {
+        "type": 3,
+        "name": "artist",
+        "description": "[required] Artist of the song.",
+        "required": true
+      },
+      {
+        "type": 3,
+        "name": "title",
+        "description": "[required] Title of the song.",
+        "required": true
+      },
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "Public Discord (Solo-Octet channel)",
+            "value": "discord"
+          },
+          {
+            "name": "Editor Discord (Your own personal editor channel)",
+            "value": "editor channel"
+          },
+          {
+            "name": "Website (xivmidi.com)",
+            "value": "website"
+          },
+          {
+            "name": "Website & Public Discord",
+            "value": "website + discord"
+          },
+          {
+            "name": "Website & Editor channel",
+            "value": "website + editor channel"
+          },
+          {
+            "name": "Public Discord & Editor channel",
+            "value": "discord + editor channel"
+          },
+          {
+            "name": "All Options (Website & Public Discord & Editor Discord)",
+            "value": "website + discord + editor channel"
+          }
+        ],
+        "name": "push-options",
+        "description": "[required] Where to push the file.",
+        "required": true
+      },
+      {
+        "type": 3,
+        "name": "editor-name",
+        "description": "[optional] Enter your desired editor name (will be saved as default for future uploads).",
+        "required": false
+      },
+      {
+        "type": 3,
+        "name": "source",
+        "description": "[optional] Source of the MIDI file.",
+        "required": false
+      },
+      {
+        "type": 3,
+        "name": "comment",
+        "description": "[optional] Any additional information.",
+        "required": false
+      }
+    ],
+    "name": "upload-editor",
+    "description": "Upload MIDI files.",
+    "default_member_permissions": "68719476736",
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "name": "midi",
+        "description": "[required] .mid file to upload.",
+        "required": true,
+        "type": 11
+      },
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "solo",
+            "value": "Solo"
+          },
+          {
+            "name": "duet",
+            "value": "Duet"
+          },
+          {
+            "name": "trio",
+            "value": "Trio"
+          },
+          {
+            "name": "quartet",
+            "value": "Quartet"
+          },
+          {
+            "name": "quintet",
+            "value": "Quintet"
+          },
+          {
+            "name": "sextet",
+            "value": "Sextet"
+          },
+          {
+            "name": "septet",
+            "value": "Septet"
+          },
+          {
+            "name": "octet",
+            "value": "Octet"
+          }
+        ],
+        "name": "band-size",
+        "description": "[required] Number of performers / tracks.",
+        "required": true
+      },
+      {
+        "type": 3,
+        "name": "artist",
+        "description": "[required] Artist of the song.",
+        "required": true
+      },
+      {
+        "type": 3,
+        "name": "title",
+        "description": "[required] Title of the song.",
+        "required": true
+      },
+      {
+        "type": 3,
+        "name": "editor-name",
+        "description": "[optional] Enter your desired editor name (will be saved as default for future uploads).",
+        "required": false
+      },
+      {
+        "type": 3,
+        "name": "source",
+        "description": "[optional] Source of the MIDI file.",
+        "required": false
+      },
+      {
+        "type": 3,
+        "name": "comment",
+        "description": "[optional] Any additional information.",
+        "required": false
+      }
+    ],
+    "name": "upload",
+    "description": "Upload MIDI files.",
+    "default_member_permissions": "68719476736",
+    "type": 1
+  }
+]
+2025-04-13T09:15:00.358Z - debug: [DeployCommands] Deploying commands to guild 1304894267042299934.
+2025-04-13T09:15:00.359Z - debug: [DeployCommands] Client ID: 1208425521667375145.
+2025-04-13T09:15:00.626Z - info: [DeployCommands] Successfully reloaded 4 application (/) commands.

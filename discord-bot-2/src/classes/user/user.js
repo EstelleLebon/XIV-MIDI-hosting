@@ -1,12 +1,12 @@
-// import error from "../error/error.js";
+import dbcheck from "../dbcheck/dbcheck.js";
+import error from "../error/error.js";
 import createLogger from "../logger/logger.js";
 import axios from "axios";
 const discordbdd = process.env.discordbdd;
 
 class User {
-	constructor(interaction, stream = null) {
+	constructor(interaction, error = null) {
 		this.interaction = interaction; // Create a new object, not a reference
-		this.stream = stream;
 		this.discord_id = null;
 		this.discord_name = null;
 		this.editor_name = null;
@@ -15,24 +15,25 @@ class User {
 		this.editor_role = false;
 		this.logger = createLogger('User-Class');
 		this.initialized = false;
-		// this.error = null;
+		this.error = error;
 	}
 
 	async init() {
 		this.logger.info(`[INIT] Initializing user...`);
 		this.logger.debug(`[INIT] User ID: ${this.discord_id}`);
 
-		// this.error = new error(this.interaction, this.logger, this.stream);
-		// this.error.init();
-		// this.logger.debug(`[INIT] Error initialized`);
-
+		if (!this.error) {
+			this.error = new error(this.logger);
+			this.error.init();
+			this.logger.debug(`[INIT] ErrorClass initialized`);
+		}
 
 		if (this.interaction) {
 			this.logger.debug(`[INIT] Interaction is not null`);
 			this.discord_id = this.interaction.user.id;
 		} else {
 			this.logger.error(`[INIT] Interaction is null`);
-			// this.error.add_error(`Error: this.interaction: ${this.interaction}`);
+			this.error.add_error(`[USERCLASS] [INIT] Error: this.interaction: ${this.interaction ? this.interaction : '????'}`);
 		}
 		
 		this.logger.debug(`[INIT] Discord ID: ${this.discord_id}`);
@@ -52,26 +53,14 @@ class User {
 				await this.init_from_interaction()
 				this.initialized = true;
 				await this.create_user()
-					.catch((error) => {
-						this.logger.error(`[INIT] Error creating user: ${error}`);
-						// this.error.add_error(`Error creating user`);
-					});
 				const cachedname = user.editor_name;
 				await this.handle_editor_name(cachedname);
 			}
 		} else {
 			this.logger.error(`[INIT] Error: this.discord_id: ${this.discord_id}`);
-			// this.error.add_error(`User not found`);
+			this.error.add_error(`[USERCLASS] [INIT] Error: this.discord_id: ${this.discord_id ? this.discord_id : '????'}`);
 		}
 
-		this.logger.debug(`[INIT] User data:`);
-		this.logger.debug(`[INIT] Discord ID: ${this.discord_id}`);
-		this.logger.debug(`[INIT] Discord name: ${this.discord_name}`);
-		this.logger.debug(`[INIT] Editor name: ${this.editor_name}`);
-		this.logger.debug(`[INIT] Editor channel ID: ${this.editor_channel_id}`);
-		this.logger.debug(`[INIT] Admin: ${this.admin}`);
-		this.logger.debug(`[INIT] Editor role: ${this.editor_role}`);
-		this.logger.debug(`[INIT] User initialized: ${this.initialized}`);
 		this.logger.info(`[INIT] User ${this.discord_id} initialized`);
 		this.initialized = true;
 		
@@ -164,6 +153,18 @@ class User {
 
 	async get_user() {
 		this.logger.info(`[get_user] Getting user ${this.discord_id}`);
+
+		// check db status
+		const db = new dbcheck();
+		const dbStatus = await db.check();
+		if (!dbStatus) {
+			this.logger.error('Database is down, aborting delete user.');
+			return;
+		}
+
+		this.logger.debug(`[get_user] Database status: ${dbStatus}`);
+
+		
 		if (!this.discord_id) {
 			this.logger.error(`User ${this.discord_id} not found`);
 			// this.error.add_error(`Error: this.discord_id: ${this.discord_id}`);
@@ -199,6 +200,18 @@ class User {
 
 	async create_user() {
 		this.logger.info(`[create_user] Creating user ${this.discord_id}`);
+
+		// check db status
+		const db = new dbcheck();
+		const dbStatus = await db.check();
+		if (!dbStatus) {
+			this.logger.error('Database is down, aborting delete user.');
+			return;
+		}
+
+		this.logger.debug(`[create_user] Database status: ${dbStatus}`);
+
+
 		if (!this.discord_id) {
 			this.logger.error(`[create_user] User ${this.discord_id} not found`);
 			// this.error.add_error(`Error: this.discord_id: ${this.discord_id}`);
@@ -245,6 +258,16 @@ class User {
 
 	async update_user({ discord_name = null, editor_name = null, admin = null, editor_role = null, editor_channel_id = null } = {}) {
 		this.logger.info(`[update_user] Updating user ${this.discord_id}`);
+
+		// check db status
+		const db = new dbcheck();
+		const dbStatus = await db.check();
+		if (!dbStatus) {
+			this.logger.error('Database is down, aborting delete user.');
+			return;
+		}
+
+		this.logger.debug(`[update_user] Database status: ${dbStatus}`);
 
 		if (!this.discord_id) {
 			this.logger.error(`[update_user] User ${this.discord_id} not found`);
@@ -299,6 +322,15 @@ class User {
 	async delete_user() {
 		this.logger.info(`[delete_user] Deleting user ${this.discord_id}`);
 
+		// check db status
+		const db = new dbcheck();
+		const dbStatus = await db.check();
+		if (!dbStatus) {
+			this.logger.error('Database is down, aborting delete user.');
+			return;
+		}
+		this.logger.debug(`[delete_user] Database status: ${dbStatus}`);
+
 		if (!this.discord_id) {
 			this.logger.error(`[delete_user] User ${this.discord_id} not found`);
 			// this.error.add_error(`Error: this.discord_id: ${this.discord_id}`);
@@ -329,6 +361,66 @@ class User {
 				this.logger.error(`[delete_user] Error deleting user: ${error}`);
 				// this.error.add_error(`Error deleting user`);
 			});
+	}
+
+	async update_editor_channel_id() {
+		this.logger.info(`[update_editor_channel_id] Updating editor channel ID for user ${this.discord_id}`);
+		const categoryId = process.env.categoryb;
+		if (!categoryId) {
+			this.logger.error('Category ID not found');
+			this.error.add_error('Category ID not found');
+			return null;
+		}
+		this.logger.debug(`Category ID: ${categoryId}`);
+		const interaction = this.interaction;
+		if (!interaction) {
+			this.logger.error('Interaction is null');
+			this.error.add_error('Interaction is null');
+			return null;
+		}
+
+		let category = null;
+		try {
+			category = await interaction.guild.channels.cache.get(categoryId);
+			this.logger.debug(`Category: ${category}`);
+		} catch (error) {
+			this.logger.error(`Error fetching category: ${error}`);
+			this.error.add_error(`Error fetching category: ${error}`);
+			return null;
+		}
+	
+		if (!category) {
+			this.logger.error('Category not found');
+			return null;
+		}
+	
+		const userId = interaction.user.id;
+	
+		let foundChannel = null;
+	
+		category.children.cache.forEach(channel => {
+			if (foundChannel) return; // Stop searching if we found the channel
+			this.logger.debug(`Checking channel: ${channel.name}`);
+			channel.permissionOverwrites.cache.forEach(overwrite => {
+				this.logger.debug(`Checking overwrite: ${overwrite.id}`);
+				if (overwrite.id === userId) {
+					foundChannel = channel.id;
+					this.logger.debug(`Found channel: ${channel.name} / ID: ${channel.id}`);
+					return;
+				}
+			});
+			if (foundChannel) return; // Stop searching if we found the channel
+		});
+	
+		if (foundChannel) {
+			this.logger.info(`Found channel: ${foundChannel}`);
+			this.editor_channel_id = foundChannel;
+		} else {
+			this.logger.info('No channel found for the user');
+			return null;
+		}
+
+		await this.update_user({ editor_channel_id: this.editor_channel_id });
 	}
 
 	toJSON() {
