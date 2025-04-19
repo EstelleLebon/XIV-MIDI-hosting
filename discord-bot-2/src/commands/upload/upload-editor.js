@@ -80,7 +80,7 @@ const execute = async (interaction) => {
     logger.debug(`User ID: ${interaction.user.id}`);
     logger.debug(`Channel ID: ${interaction.channel.id}`);
     await interaction.deferReply({ ephemeral: true });
-    const work = new Upload(interaction, true, null);
+    const work = new Upload(interaction, true);
     logger.debug('Starting upload process...');
     await work.process();
     logger.debug('Upload process completed.');

@@ -17,7 +17,7 @@ const execute = async (interaction) => {
 	fromDate.setHours(0, 0, 0, 0);
 	
 
-	const backup = new Backup(fromDate);
+	const backup = new Backup(fromDate, true);
 	await backup.startBackup();
 	logger.info(`[execute] Init backup completed.`);
 	

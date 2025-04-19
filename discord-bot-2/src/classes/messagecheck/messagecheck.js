@@ -98,7 +98,7 @@ class MessageCheck {
 				break;
 			case 3:
 				this.logger.info('[check_upload] Invalid file uploaded - trying to delete message');
-				reply = `Messages in this channel must contain a MIDI or LRC file attachment(s).`;
+				reply = `Messages in this channel must contain a MIDI and optionally LRC or MP3 file attachment(s).`;
 				break;
 		}
 
@@ -164,7 +164,7 @@ class MessageCheck {
 		} else {
 			// Check if the channel requires MIDI/LRC files
 			for (const attachment of this.attachments.values()) {
-				if (!(attachment.name.endsWith('.mid') || attachment.name.endsWith('.midi') || attachment.name.endsWith('.lrc'))) {
+				if (!(attachment.name.endsWith('.mid') || attachment.name.endsWith('.midi') || attachment.name.endsWith('.lrc') || attachment.name.endsWith('.mp3'))) {
 					this.logger.info('[validitycheck] Invalid file uploaded');
 					this.validity = 3;
 				}

@@ -74,7 +74,7 @@ const execute = async (interaction) => {
         return interaction.editReply({ content: 'Database is down, please try again later.', ephemeral: true });
     }
     logger.debug(`Database status: ${dbStatus}`);
-    const work = new Upload(interaction, false, null);
+    const work = new Upload(interaction, false);
     logger.debug('Starting upload process...');
     await work.process();
     logger.debug('Upload process completed.');

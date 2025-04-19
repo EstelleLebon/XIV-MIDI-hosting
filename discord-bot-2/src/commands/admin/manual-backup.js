@@ -10,8 +10,13 @@ const data = new SlashCommandBuilder()
 
 const execute = async (interaction) => {
 	logger.info(`[execute] Executing manual backup command...`);
+	
 	await interaction.deferReply({ ephemeral: true });
-	const backup = new Backup();
+	const fromDate = new Date();
+	fromDate.setDate(1); // Set to the first day of the current month
+	fromDate.setMonth(fromDate.getMonth() - 1); // Move to the previous month
+	fromDate.setHours(0, 0, 0, 0); // Set time to 00:00:00
+	const backup = new Backup(fromDate);
 	await backup.startBackup();
 	logger.info(`[execute] Manual backup completed.`);
 	

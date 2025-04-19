@@ -15,13 +15,14 @@ fromDate.setMonth(fromDate.getMonth() - 1); // Move to the previous month
 fromDate.setHours(0, 0, 0, 0); // Set time to 00:00:00
 
 class Backup {
-	constructor(fromDate = fromDate) {
+	constructor(fromDate = fromDate, init = false) {
 		this.logger = createLogger('Backup-Class'); // Logger instance for this class
 		this.fromDate = fromDate;
 		this.backuplist = []; // Array to hold backup IDs
 		this.initialized = false; // Flag to check if the backup is initialized
 		this.client = null; // Discord client instance
 		this.logger.debug(`[Backup Constructor] fromDate: ${this.fromDate}`);
+		this.init = init;
 
 	}
 
@@ -82,10 +83,12 @@ class Backup {
 
 
 		// Post files to discord
-		this.logger.info(`[startBackup] Posting files to Discord...`);
-		const poster = new Poster(this.client); // Post files to Discord
-		await poster.worker();
-		this.logger.info(`[startBackup] Posting completed`);
+		if (!this.init) {
+			this.logger.info(`[startBackup] Posting files to Discord...`);
+			const poster = new Poster(this.client); // Post files to Discord
+			await poster.worker();
+			this.logger.info(`[startBackup] Posting completed`);
+		}
 
 		// move files to backup folder
 		this.logger.info(`[startBackup] Moving files to backup folder...`);

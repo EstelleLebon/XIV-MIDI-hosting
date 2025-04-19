@@ -1,15 +1,14 @@
 import error from "../error/error.js";
-import User from "../user/user.js";
-import createLogger from "../../classes/logger/logger.js";
+import User from "./user/user.js";
+import createLogger from "../logger/logger.js";
 import UploadPreview from "./uploadpreview.js";
-import File from "../file/file.js";
+import File from "./file/file.js";
 import dbcheck from "../dbcheck/dbcheck.js";
 
 class Upload {
-	constructor(interaction, editor_role, stream = null) {
+	constructor(interaction, editor_role, ) {
 		this.interaction = interaction; // Interaction object from Discord.js
 		this.editor_role = editor_role; // Role of the editor
-		this.stream = stream; // Optional stream for file upload
 		this.logger = createLogger('Upload-Class'); // Logger instance for this class
 		this.user = null; // User object
 		this.file = null; // File object
@@ -28,9 +27,18 @@ class Upload {
 		// Initialize user
 		this.logger.debug(`Creating user object...`);
 		this.user = new User(this.interaction, this.error); // Create a new User instance
-		this.logger.debug(`Initializing user object...`);
+		this.logger.debug(`Initializing user object...`);  
 		await this.user.init(); // Initialize the user object
 		this.logger.debug(`User object initialized: ${JSON.stringify(this.user.toJSON(), null, 2)}`);
+
+		// check errors
+		if (this.error.iserror()) {
+			this.logger.error(`Errors found: ${this.error.getMessage()}`);
+			return this.interaction.editReply({
+				content: `Errors found: ${this.error.message.length} errors`,
+				ephemeral: true,
+			});
+		}
 
 		// Initialize file
 		this.logger.debug(`Creating file object...`);
@@ -42,6 +50,16 @@ class Upload {
 		await this.file.init(); // Initialize the file object
 		this.logger.debug(`File object initialized: ${JSON.stringify(this.file.toJSON(), null, 2)}`);
 
+
+		// check errors
+		if (this.error.iserror()) {
+			this.logger.error(`Errors found: ${this.error.getMessage()}`);
+			return this.interaction.editReply({
+				content: `Errors found: ${this.error.message.length} errors`,
+				ephemeral: true,
+			});
+		}
+
 		// Handle editor channel ID
 		this.logger.debug(`Checking if editor channel ID is set...`);
 		this.logger.debug(`editor push: ${this.file.pushes.editor}`);
@@ -49,11 +67,20 @@ class Upload {
 			await this.user.update_editor_channel_id(); // Update the editor channel ID
 			if (!this.user.editor_channel_id) {
 				this.logger.error(`Failed to update editor channel ID`);
-				return this.interaction.followUp({
+				return this.interaction.editReply({
 					content: `Failed to update editor channel ID. If you own a personal editor channel, please contact my developer.`,
 					ephemeral: true,
 				});
 			}
+		}
+
+		// check errors
+		if (this.error.iserror()) {
+			this.logger.error(`Errors found: ${this.error.getMessage()}`);
+			return this.interaction.editReply({
+				content: `Errors found: ${this.error.message.length} errors`,
+				ephemeral: true,
+			});
 		}
 
 		// Handle cases where the file already exists
@@ -75,7 +102,7 @@ class Upload {
 			} else {
 				// Owner mismatch
 				this.logger.debug(`File already exists, owner is different`);
-				return this.interaction.followUp({
+				return this.interaction.editReply({
 					content: `This file already exists, but you are not the owner. Please contact the owner to upload a new version.\nIf you are the owner, please contact my developer to fix this.`,
 					ephemeral: true,
 				});
@@ -88,7 +115,7 @@ class Upload {
 			// Unknown case
 			this.logger.error('Unknown case for file pushes');
 			this.logger.error(`Pushes: ${JSON.stringify(this.file.pushes)}`);
-			return this.interaction.followUp({
+			return this.interaction.editReply({
 				content: `Unknown case for file pushes. Please contact my developer.`,
 				ephemeral: true,
 			});
@@ -110,6 +137,17 @@ class Upload {
 		}
 		this.logger.debug(`File booleans set: ${JSON.stringify(this.file.toJSON(), null, 2)}`);
 				
+
+		// check errors
+		if (this.error.iserror()) {
+			this.logger.error(`Errors found: ${this.error.getMessage()}`);
+			return this.interaction.editReply({
+				content: `Errors found: ${this.error.message.length} errors`,
+				ephemeral: true,
+			});
+		}
+
+		
 		// Sending file preview
 		this.preview = new UploadPreview(this.interaction, this.editor_role, this.error); // Create a new UploadPreview instance
 		await this.preview.init(this.file); // Initialize the preview
