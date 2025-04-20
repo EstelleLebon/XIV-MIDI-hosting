@@ -1,0 +1,10 @@
+api-lb
+database
+database-api-special
+watcher
+**/*.env
+**/public.env
+**/node_modules
+**/package-lock.json
+**/.dockerignore
+**/Dockerfile
