@@ -656,8 +656,8 @@ class File {
 			let duration = "";
 			this.logger.debug(`File duration: ${this.song_duration}`);
 			if (this.song_duration) {
-				const minutes = String(Math.floor(Number(this.song_duration) / 60));
-				const seconds = String(Number(Math.floor(this.song_duration)) % 60);
+				const minutes = String(Math.floor(Number(this.song_duration) / 60000)); // Convert milliseconds to minutes
+				const seconds = String(Math.floor((Number(this.song_duration) % 60000) / 1000)); // Get remaining seconds
 				duration = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 			} else {
 				duration = "0:00";
@@ -880,8 +880,8 @@ class File {
 			let duration = "";
 			this.logger.debug(`File duration: ${this.song_duration}`);
 			if (this.song_duration) {
-				const minutes = String(Math.floor(Number(this.song_duration) / 60));
-				const seconds = String(Number(Math.floor(this.song_duration)) % 60);
+				const minutes = String(Math.floor(Number(this.song_duration) / 60000)); // Convert milliseconds to minutes
+				const seconds = String(Math.floor((Number(this.song_duration) % 60000) / 1000)); // Get remaining seconds
 				duration = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 			} else {
 				duration = "0:00";

@@ -456,7 +456,7 @@ class MidiFile {
 			const ticksPerBeat = this.data.header.ticksPerBeat;
 			this.logger.debug(`[duration_from_data] Ticks per beat: ${ticksPerBeat}`);
 		
-			let totalDuration = 0; // Durée totale en secondes
+			let totalDuration = 0; // Durée totale en millisecondes
 			let currentTempo = 500000; // Tempo par défaut : 120 BPM (500000 µs/beat)
 			let lastTick = 0; // Dernier tick traité
 		
@@ -479,7 +479,7 @@ class MidiFile {
 				lastTick = event.absoluteTime;
 		
 				// Ajouter la durée pour les ticks écoulés
-				totalDuration += (deltaTicks / ticksPerBeat) * (currentTempo / 1000000);
+				totalDuration += (deltaTicks / ticksPerBeat) * (currentTempo / 1000);
 		
 				// Si l'événement est un changement de tempo, mettre à jour le tempo
 				if (event.type === 'meta' && event.subtype === 'setTempo') {
@@ -488,8 +488,8 @@ class MidiFile {
 				}
 			}
 		
-			this.logger.debug(`[duration_from_data] Total duration: ${totalDuration} seconds`);
-			return totalDuration;
+			this.logger.debug(`[duration_from_data] Total duration: ${Math.round(totalDuration)} milliseconds`);
+			return Math.round(totalDuration);
 		} catch (error) {
 			this.logger.error(`[duration_from_data] Error calculating duration: ${error.message}`);
 			return 0;

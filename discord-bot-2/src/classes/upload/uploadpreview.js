@@ -66,8 +66,8 @@ class UploadPreview {
 		let duration = "";
 		this.logger.debug(`File duration: ${file.song_duration}`);
 		if (file.song_duration) {
-			const minutes = String(Math.floor(Number(file.song_duration) / 60));
-			const seconds = String(Number(Math.floor(file.song_duration)) % 60);
+			const minutes = String(Math.floor(Number(file.song_duration) / 60000)); // Convert milliseconds to minutes
+				const seconds = String(Math.floor((Number(file.song_duration) % 60000) / 1000)); // Get remaining seconds
 			duration = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 		} else {
 			duration = "0:00";

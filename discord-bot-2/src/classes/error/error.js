@@ -11,8 +11,6 @@ class error {
 		if (!this.logger) {
 			this.logger = createLogger('Error-Class');
 		}
-		this.logger.info(`[INIT] Initializing error class...`);
-		this.logger.debug(`[INIT] Error class initialized`);
 	}
 
 
