@@ -21,7 +21,11 @@ const execute = async (interaction) => {
 	await backup.startBackup();
 	logger.info(`[execute] Init backup completed.`);
 	
-	await interaction.editReply({ content: 'Init backup completed.', ephemeral: true });
+	try {
+		await interaction.editReply({ content: 'Init backup completed.', ephemeral: true });
+	} catch (error) {
+		logger.error(`[execute] Failed to reply: ${error.message}`);
+	}
 }
 export { data, execute };
 export default {

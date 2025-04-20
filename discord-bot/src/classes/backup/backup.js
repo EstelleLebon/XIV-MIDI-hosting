@@ -68,11 +68,18 @@ class Backup {
 		}
 
 		// Initialize download promises
-		for (const chan of this.backuplist) {
-			this.logger.debug(`[startBackup] Processing backup ID: ${chan}`);
-			const channel = new Channel(chan, null, this.fromDate);
-			await channel.worker();
-			this.logger.info(`[startBackup] Backup completed for ID: ${chan}`);
+		const batchSize = 5; // Number of channels to process concurrently
+
+		for (let i = 0; i < this.backuplist.length; i += batchSize) {
+			const batch = this.backuplist.slice(i, i + batchSize);
+			this.logger.debug(`[startBackup] Processing batch: ${batch}`);
+
+			await Promise.all(batch.map(async (chan) => {
+				this.logger.debug(`[startBackup] Processing backup ID: ${chan}`);
+				const channel = new Channel(chan, null, this.fromDate);
+				await channel.worker();
+				this.logger.info(`[startBackup] Backup completed for ID: ${chan}`);
+			}));
 		}
 
 		// Zip files 
