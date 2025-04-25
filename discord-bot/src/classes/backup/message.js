@@ -40,7 +40,7 @@ class Message{
 				ext = ['.mid', '.lrc', '.midi'];
 				break;
 			case 'editor':
-				ext = ['.mid', '.lrc', '.midi'];
+				ext = ['.mid', '.lrc', '.midi', '.zip', '.rar', '.7z'];
 				break;
 			case 'pack':
 				ext = ['.zip', '.rar', '.7z'];

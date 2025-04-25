@@ -3,7 +3,7 @@ import { FastifyTypedInstance } from '../../../types.ts';
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
-export async function listFiles(app: FastifyTypedInstance) {
+export async function listFilesPublic(app: FastifyTypedInstance) {
   app.get(
     '/files',
     {
@@ -13,11 +13,10 @@ export async function listFiles(app: FastifyTypedInstance) {
         tags: ['files'],
         description: 'List files',
         querystring: z.object({
-          md5: z.string().optional(),
-          editor_discord_id: z.string().optional(),
-          editor: z.string().optional(),
-          artist: z.string().optional(),
-          title: z.string().optional(),
+          md5: z.string().optional().describe('MD5 hash of the file'),
+          editor: z.string().optional().describe('MIDI editor name'),
+          artist: z.string().optional().describe('Artist of the song'),
+          title: z.string().optional().describe('Title of the song'),
           performer: z
             .enum([
               'Solo',
@@ -29,12 +28,12 @@ export async function listFiles(app: FastifyTypedInstance) {
               'Septet',
               'Octet',
             ])
-            .optional(),
-          sources: z.string().optional(),
-          comments: z.string().optional(),
-          tags: z.array(z.string()).optional(),
-          instrument: z
-            .enum([
+            .optional().describe('Band size'),
+          sources: z.string().optional().describe('Sources of the file'),
+          comments: z.string().optional().describe('Comments about the file'),
+          tags: z.array(z.string()).optional().describe('WIP(does not work yet)'),
+          instrument: z.union([
+            z.enum([
               'Piano',
               'Harp',
               'Fiddle',
@@ -66,24 +65,56 @@ export async function listFiles(app: FastifyTypedInstance) {
               'Bongo',
               'Timpani',
               'Unknown',
-            ])
-            .optional(),
-          discord: z.coerce.boolean().optional(),
-          website: z.coerce.boolean().optional(),
-          editor_channel: z.coerce.boolean().optional(),
-          page: z.coerce.number().positive().default(1),
-          limit: z.coerce.number().positive().default(100),
+            ]),
+            z.array(
+              z.enum([
+                'Piano',
+                'Harp',
+                'Fiddle',
+                'Lute',
+                'Fife',
+                'Flute',
+                'Oboe',
+                'Panpipes',
+                'Clarinet',
+                'Trumpet',
+                'Saxophone',
+                'Trombone',
+                'Horn',
+                'Tuba',
+                'Violin',
+                'Viola',
+                'Cello',
+                'DoubleBass',
+                'ElectricGuitarOverdriven',
+                'ElectricGuitarClean',
+                'ElectricGuitarMuted',
+                'ElectricGuitarPowerChords',
+                'ElectricGuitarSpecial',
+                'ElectricGuitar',
+                'Program:ElectricGuitar',
+                'BassDrum',
+                'SnareDrum',
+                'Cymbal',
+                'Bongo',
+                'Timpani',
+                'Unknown',
+              ])
+            ),
+          ]).optional().describe('Instrument used in the file. You can use a single instrument or an array of instruments (AND filter).'),
+          discord: z.coerce.boolean().optional().describe('Is the file shared on Discord?'),
+          website: z.coerce.boolean().optional().describe('Is the file shared on the website?'),
+          editor_channel: z.coerce.boolean().optional().describe('Is the file shared on the personal editor channel?'),
+          page: z.coerce.number().positive().default(1).describe('Page number for pagination'),
+          limit: z.coerce.number().positive().default(100).describe('Number of records per page'),
         }),
         response: {
           200: z.object({
             files: z.array(z.object(
               {
-                id: z.number(),
-                md5: z.string(),
-                editor_discord_id: z.string(),
-                editor: z.string(),
                 artist: z.string(),
                 title: z.string(),
+                editor: z.string(),                
                 performer: z.string(),
                 sources: z.string(),
                 comments: z.string(),
@@ -91,7 +122,6 @@ export async function listFiles(app: FastifyTypedInstance) {
                 song_duration: z.number(),
                 tracks: z.array(
                   z.object({
-                    id: z.number(),
                     order: z.number(),
                     name: z.string(),
                     instrument: z.string(),
@@ -120,7 +150,6 @@ export async function listFiles(app: FastifyTypedInstance) {
     async (request, reply) => {
       const {
         md5,
-        editor_discord_id,
         editor,
         artist,
         title,
@@ -140,7 +169,6 @@ export async function listFiles(app: FastifyTypedInstance) {
       const filter: any = {};
       // create a filter only with filled params so this route be more flexible, in the same route you can search for any filter
       if (md5) filter.md5 = md5;
-      if (editor_discord_id) filter.editor_discord_id = editor_discord_id;
       if (editor) filter.editor = editor;
       if (artist) filter.artist = artist;
       if (title) filter.title = title;
@@ -172,8 +200,61 @@ export async function listFiles(app: FastifyTypedInstance) {
 
       console.log('Total records:', totalRecords);
 
+      // Format the files to remove unnecessary fields
+      const formattedFiles = files.map((file) => {
+        const {
+          editor,
+          artist,
+          title,
+          performer,
+          sources,
+          comments,
+          tags,
+          song_duration,
+          tracks,
+          discord,
+          website,
+          editor_channel,
+          discord_message_id,
+          discord_link,
+          website_file_path,
+          website_link,
+          editor_channel_id,
+          editor_channel_link,
+          createdAt,
+          updatedAt,
+        } = file;
+        return {
+          artist,
+          title,
+          editor,          
+          performer,
+          sources,
+          comments,
+          tags,
+          song_duration,
+          tracks: tracks.map((track) => ({
+            order: track.order,
+            name: track.name,
+            instrument: track.instrument,
+            modifier: track.modifier,
+          })),
+          discord,
+          website,
+          editor_channel,
+          discord_message_id,
+          discord_link,
+          website_file_path,
+          website_link,
+          editor_channel_id,
+          editor_channel_link,
+          createdAt,
+          updatedAt,
+        };
+      });
+
       const response = {
-        files,
+        files: formattedFiles, // Renamed from formattedFiles to files to match the schema
         totalPages: Math.ceil(totalRecords / limit),
         totalRecords,
       };
