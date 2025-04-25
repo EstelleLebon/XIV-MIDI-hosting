@@ -2,10 +2,13 @@
   "name": "discord_bot",
   "version": "1.0.0",
   "main": "bot.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "bot": "node bot.js",
-    "deploy": "node deploy-commands.js"
+    "bot": "node src/bot.js",
+    "deploy": "env $(cat .env | xargs) node src/deploy-commands.js",
+    "devbot": "env $(cat .env | xargs) nodemon src/bot.js",
+    "devdeploy": "env $(cat .env | xargs) node src/deploy-commands.js"
   },
   "author": "",
   "license": "ISC",
@@ -13,21 +16,16 @@
   "dependencies": {
     "adm-zip": "^0.5.16",
     "axios": "^1.7.7",
-    "clamav.js": "^0.12.0",
-    "crypto": "^1.0.1",
     "discord.js": "^14.16.3",
     "express": "^4.21.2",
+    "fs": "^0.0.1-security",
     "midi-file-parser": "^1.0.0",
     "node-cron": "^3.0.3",
-    "node-fetch": "^3.3.2",
-    "nodemon": "^3.1.7",
-    "sqlite3": "^5.1.7",
-    "ssh2": "^1.16.0",
-    "ssh2-sftp-client": "^11.0.0",
-    "winston": "^3.16.0",
-    "yazl": "^3.3.0"
+    "path": "^0.12.7",
+    "winston": "^3.16.0"
   },
   "devDependencies": {
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.9"
   }
 }

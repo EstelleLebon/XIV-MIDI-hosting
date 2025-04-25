@@ -76,7 +76,41 @@ export async function listFiles(app: FastifyTypedInstance) {
         }),
         response: {
           200: z.object({
-            files: z.array(z.unknown()),
+            files: z.array(z.object(
+              {
+                id: z.number(),
+                md5: z.string(),
+                editor_discord_id: z.string(),
+                editor: z.string(),
+                artist: z.string(),
+                title: z.string(),
+                performer: z.string(),
+                sources: z.string(),
+                comments: z.string(),
+                tags: z.array(z.string()),
+                song_duration: z.number(),
+                tracks: z.array(
+                  z.object({
+                    id: z.number(),
+                    order: z.number(),
+                    name: z.string(),
+                    instrument: z.string(),
+                    modifier: z.number(),
+                  }),
+                ),
+                discord: z.boolean().nullable(),
+                website: z.boolean().nullable(),
+                editor_channel: z.boolean().nullable(),
+                discord_message_id: z.string().nullable(),
+                discord_link: z.string().nullable(),
+                website_file_path: z.string().nullable(),
+                website_link: z.string().nullable(),
+                editor_channel_id: z.string().nullable(),
+                editor_channel_link: z.string().nullable(),
+                createdAt: z.date(),
+                updatedAt: z.date(),
+              },
+            )),
             totalPages: z.number(),
             totalRecords: z.number(),
           }),
@@ -107,12 +141,16 @@ export async function listFiles(app: FastifyTypedInstance) {
       // create a filter only with filled params so this route be more flexible, in the same route you can search for any filter
       if (md5) filter.md5 = md5;
       if (editor_discord_id) filter.editor_discord_id = editor_discord_id;
-      if (editor) filter.editor = editor;
-      if (artist) filter.artist = artist;
-      if (title) filter.title = title;
+      if (editor) filter.editor = { contains: editor, mode: 'insensitive' }; 
+      if (artist) filter.artist = { contains: artist, mode: 'insensitive' }; 
+      if (title) filter.title = { contains: title, mode: 'insensitive' }; 
       if (performer) filter.performer = performer;
       if (tags) filter.tags = { hasSome: tags };
-      if (instrument) filter.tracks = { some: { instrument } };
+      if (instrument) {
+        filter.AND = Array.isArray(instrument)
+          ? instrument.map((inst) => ({ tracks: { some: { instrument: inst } } }))
+          : [{ tracks: { some: { instrument } } }];
+      }
       if (discord !== undefined) filter.discord = discord;
       if (website !== undefined) filter.website = website;
       if (editor_channel !== undefined) filter.editor_channel = editor_channel;
