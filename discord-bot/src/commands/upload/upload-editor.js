@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, MessageFlags } from "discord.js";
 import createLogger from "../../classes/logger/logger.js";
 import Upload from "../../classes/upload/upload.js";
+import dbcheck from "../../classes/dbcheck/dbcheck.js";
 
 const logger = createLogger('Upload-Command');
 

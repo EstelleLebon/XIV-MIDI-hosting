@@ -675,7 +675,7 @@ class File {
 			message += `**Artist:** ${this.artist}`;
 			message += `\n**Title:** ${this.title}`;
 			message += `\n**Duration:** ${duration}`;
-			message += `\n**Editor:** ${this.editor}`;
+			message += `\n**Editor:** [${this.editor}](discord://-/users/${this.editor_discord_id})`;
 			if (this.sources != null && this.sources != undefined && this.sources != '' && this.sources != ' ') {
 				message += `\n**Sources:** ${this.sources}`;
 			}

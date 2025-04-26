@@ -172,7 +172,7 @@ export async function listFilesPublic(app: FastifyTypedInstance) {
       if (editor) filter.editor = { contains: editor, mode: 'insensitive' }; 
       if (artist) filter.artist = { contains: artist, mode: 'insensitive' }; 
       if (title) filter.title = { contains: title, mode: 'insensitive' };
-      if (performer) filter.performer = performer;
+      if (performer) filter.performer = { contains: performer, mode: 'insensitive' };
       if (tags) filter.tags = { hasSome: tags };
       if (instrument) {
         filter.AND = Array.isArray(instrument)

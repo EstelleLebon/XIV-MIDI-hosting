@@ -80,11 +80,23 @@ class Response {
 			components: [],
 			flags: MessageFlags.Ephemeral,
 		};
-		let messageString = `Here is your search results:`;
+		let messageString = `Here is your search results for:`;
+		const bandSize = this.interaction.options.getString('band-size');
+		const artist = this.interaction.options.getString('artist');
+		const title = this.interaction.options.getString('title');
+		const editor = this.interaction.options.getString('editor');
+		const instrument = this.interaction.options.getString('instrument');
+
+		if (bandSize) messageString += `\nBand size: ${bandSize ? bandSize : 'Any'}`;
+		if (artist) messageString += `\nArtist: ${artist ? artist : 'Any'}`;
+		if (title) messageString += `\nTitle: ${title ? title : 'Any'}`;
+		if (editor) messageString += `\nEditor: ${editor ? editor : 'Any'}`;
+		if (instrument) messageString += `\nInstrument: ${instrument ? instrument : 'Any'}`;
+
 		if (this.files.length === 0) {
-			messageString += `\nNo results found.`;
+			messageString += `\n\nNo results found.`;
 		} else {
-			messageString += `\nFound ${this.files.length} results.`;
+			messageString += `\n\nFound ${this.files.length} results:`;
 		}
 
 		let fileCount = 0;
@@ -92,7 +104,7 @@ class Response {
 			this.files.map((file, index) => {
 				if (index < 10) {
 					const tmp = `\n${index + 1}. [${file.name}](<${file.link}>)`;
-					if (messageString.length + tmp.length > 2000 - 80) {
+					if (messageString.length + tmp.length > 1900) {
 						this.logger.debug(`[BuildResponse] Message string is too long, stopping here.`);
 						return;
 					}
@@ -123,7 +135,7 @@ class Response {
 		} else if (this.files.length > 0) {
 			this.files.map((file, index) => {
 				const tmp = `\n${index + 1}. [${file.name}](<${file.link}>)`;
-				if (messageString.length + tmp.length > 2000 - 80) {
+				if (messageString.length + tmp.length > 1900) {
 						this.logger.debug(`[BuildResponse] Message string is too long, stopping here.`);
 						return;
 					}
