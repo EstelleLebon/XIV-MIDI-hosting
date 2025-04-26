@@ -1,6 +1,7 @@
 import createLogger from "../logger/logger.js";
 import error from "../error/error.js";
 import { EmbedBuilder } from "@discordjs/builders";
+import { MessageFlags } from "discord.js";
 
 class UploadPreview {
 	constructor(interaction, editor_role, error = null) {
@@ -236,11 +237,11 @@ class UploadPreview {
 		this.logger.debug(`Embed: ${JSON.stringify(this.embed)}`);
 		this.logger.debug(`Buttons: ${JSON.stringify(this.buttons)}`);
 
-		this.interactionpreview = await this.interaction.followUp({
+		this.interactionpreview = await this.interaction.editReply({
 			content: this.content,
 			embeds: this.embed ? [this.embed] : [],
 			components: this.buttons ? [this.buttons] : [],
-			ephemeral: true,
+			flags: MessageFlags.Ephemeral
 		}).catch((error) => {
 			// this.error.add_error(`Error sending preview: ${error}`);
 			this.logger.error(`Error sending preview: ${error}`);
@@ -258,7 +259,7 @@ class UploadPreview {
 			content: this.content ? this.content : null,
 			embeds: this.embed ? [this.embed] : [],
 			components: this.buttons ? [this.buttons] : [],
-			ephemeral: true,
+			flags: MessageFlags.Ephemeral
 		}).catch((error) => {
 			// this.error.add_error(`Error updating preview: ${error}`);
 			this.logger.error(`Error updating preview: ${error}`);

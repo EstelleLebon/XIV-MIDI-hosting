@@ -29,44 +29,19 @@ export async function listFilesPublic(app: FastifyTypedInstance) {
               'Octet',
             ])
             .optional().describe('Band size'),
-          sources: z.string().optional().describe('Sources of the file'),
-          comments: z.string().optional().describe('Comments about the file'),
           tags: z.array(z.string()).optional().describe('WIP(does not work yet)'),
-          instrument: z.union([
-            z.enum([
-              'Piano',
-              'Harp',
-              'Fiddle',
-              'Lute',
-              'Fife',
-              'Flute',
-              'Oboe',
-              'Panpipes',
-              'Clarinet',
-              'Trumpet',
-              'Saxophone',
-              'Trombone',
-              'Horn',
-              'Tuba',
-              'Violin',
-              'Viola',
-              'Cello',
-              'DoubleBass',
-              'ElectricGuitarOverdriven',
-              'ElectricGuitarClean',
-              'ElectricGuitarMuted',
-              'ElectricGuitarPowerChords',
-              'ElectricGuitarSpecial',
-              'ElectricGuitar',
-              'Program:ElectricGuitar',
-              'BassDrum',
-              'SnareDrum',
-              'Cymbal',
-              'Bongo',
-              'Timpani',
-              'Unknown',
-            ]),
-            z.array(
+          instrument: z.preprocess(
+            (value) => {
+              if (typeof value === 'string') {
+                try {
+                  return JSON.parse(value);
+                } catch {
+                  return value;
+                }
+              }
+              return value;
+            },
+            z.union([
               z.enum([
                 'Piano',
                 'Harp',
@@ -99,14 +74,45 @@ export async function listFilesPublic(app: FastifyTypedInstance) {
                 'Bongo',
                 'Timpani',
                 'Unknown',
-              ])
-            ),
-          ]).optional().describe('Instrument used in the file. You can use a single instrument or an array of instruments (AND filter).'),
-          discord: z.coerce.boolean().optional().describe('Is the file shared on Discord?'),
-          website: z.coerce.boolean().optional().describe('Is the file shared on the website?'),
-          editor_channel: z.coerce.boolean().optional().describe('Is the file shared on the personal editor channel?'),
-          page: z.coerce.number().positive().default(1).describe('Page number for pagination'),
-          limit: z.coerce.number().positive().default(100).describe('Number of records per page'),
+              ]),
+              z.array(
+                z.enum([
+                  'Piano',
+                  'Harp',
+                  'Fiddle',
+                  'Lute',
+                  'Fife',
+                  'Flute',
+                  'Oboe',
+                  'Panpipes',
+                  'Clarinet',
+                  'Trumpet',
+                  'Saxophone',
+                  'Trombone',
+                  'Horn',
+                  'Tuba',
+                  'Violin',
+                  'Viola',
+                  'Cello',
+                  'DoubleBass',
+                  'ElectricGuitarOverdriven',
+                  'ElectricGuitarClean',
+                  'ElectricGuitarMuted',
+                  'ElectricGuitarPowerChords',
+                  'ElectricGuitarSpecial',
+                  'ElectricGuitar',
+                  'Program:ElectricGuitar',
+                  'BassDrum',
+                  'SnareDrum',
+                  'Cymbal',
+                  'Bongo',
+                  'Timpani',
+                  'Unknown',
+                ])
+              ),
+            ])
+          ).optional().describe('Instrument used in the file. You can use a single instrument, an array of instruments, or multiple occurrences of the instrument parameter.'),
+          limit: z.coerce.number().positive().default(999999999).describe('Max number of records to return'),
         }),
         response: {
           200: z.object({
@@ -141,7 +147,6 @@ export async function listFilesPublic(app: FastifyTypedInstance) {
                 updatedAt: z.date(),
               },
             )),
-            totalPages: z.number(),
             totalRecords: z.number(),
           }),
         },
@@ -156,39 +161,34 @@ export async function listFilesPublic(app: FastifyTypedInstance) {
         performer,
         tags,
         instrument,
-        discord,
-        website,
-        editor_channel,
-        page,
-        limit = 999999999,
+        limit,
       } = request.query;
-      const skip = (page - 1) * limit;
 
       console.log('Query parameters:', request.query);
 
       const filter: any = {};
       // create a filter only with filled params so this route be more flexible, in the same route you can search for any filter
       if (md5) filter.md5 = md5;
-      if (editor) filter.editor = editor;
-      if (artist) filter.artist = artist;
-      if (title) filter.title = title;
-      if (performer) filter.performer = performer;
+      if (editor) filter.editor = { contains: editor, mode: 'insensitive' }; 
+      if (artist) filter.artist = { contains: artist, mode: 'insensitive' }; 
+      if (title) filter.title = { contains: title, mode: 'insensitive' };
+      if (performer) filter.performer = { contains: performer, mode: 'insensitive' };
       if (tags) filter.tags = { hasSome: tags };
       if (instrument) {
         filter.AND = Array.isArray(instrument)
           ? instrument.map((inst) => ({ tracks: { some: { instrument: inst } } }))
           : [{ tracks: { some: { instrument } } }];
       }
-      if (discord !== undefined) filter.discord = discord;
-      if (website !== undefined) filter.website = website;
-      if (editor_channel !== undefined) filter.editor_channel = editor_channel;
+      filter.website = true;
 
       console.log('Filter object:', filter);
 
       const files = await prisma.file.findMany({
         where: filter,
-        skip: skip,
         take: limit,
+        orderBy: {
+          updatedAt: 'desc',
+        },
         include: {
           tracks: true,
         },
@@ -255,7 +255,6 @@ export async function listFilesPublic(app: FastifyTypedInstance) {
 
       const response = {
         files: formattedFiles, // Renamed from formattedFiles to files to match the schema
-        totalPages: Math.ceil(totalRecords / limit),
         totalRecords,
       };
 

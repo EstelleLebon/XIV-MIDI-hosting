@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder, MessageFlags } from "discord.js";
 import createLogger from "../../classes/logger/logger.js";
 import Backup from "../../classes/backup/backup.js";
 
@@ -11,7 +11,7 @@ const data = new SlashCommandBuilder()
 const execute = async (interaction) => {
 	logger.info(`[execute] Executing manual backup command...`);
 	
-	await interaction.deferReply({ ephemeral: true });
+	await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 	const fromDate = new Date();
 	fromDate.setDate(1); // Set to the first day of the current month
 	fromDate.setMonth(fromDate.getMonth() - 1); // Move to the previous month
@@ -20,7 +20,7 @@ const execute = async (interaction) => {
 	await backup.startBackup();
 	logger.info(`[execute] Manual backup completed.`);
 	
-	await interaction.editReply({ content: 'Manual backup completed.', ephemeral: true });
+	await interaction.editReply({ content: 'Manual backup completed.', flags: MessageFlags.Ephemeral });
 }
 export { data, execute };
 export default {

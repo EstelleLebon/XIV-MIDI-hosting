@@ -133,10 +133,10 @@ class Channel {
 		}
 
 		let lastId = null;
-		const maxConcurrent = 25; // Maximum concurrent processing
+		const maxConcurrent = 10;
 
 		while (true) {
-			const options = { limit: 25 }; // Fetch 25 messages at a time
+			const options = { limit: 10 };
 			if (lastId) options.before = lastId;
 
 			const fetchedMessages = await channel.messages.fetch(options);
@@ -144,16 +144,14 @@ class Channel {
 			if (fetchedMessages.size === 0) break;
 
 			const promises = []; // Local array for promises
-			let hasMessagesInRange = false; // Flag to check if messages are in range
 
 			for (const message of fetchedMessages.values()) {
 				const messageDate = message.createdAt;
 				this.logger.debug(`[worker] Message ID: ${message.id}, Date: ${messageDate}`);
 
 				if (messageDate >= this.fromDate && messageDate <= this.toDate) {
-					hasMessagesInRange = true;
 					this.logger.debug(`[worker] Message ${message.id} is within date range`);
-					promises.push(this.processMessage(message));
+					promises.push(await this.processMessage(message));
 
 					// Limit concurrent processing
 					if (promises.length >= maxConcurrent) {
@@ -161,12 +159,6 @@ class Channel {
 						promises.length = 0; // Clear the array
 					}
 				}
-			}
-
-			 // If no messages are in range, stop processing further
-			if (!hasMessagesInRange) {
-				this.logger.debug(`[worker] No messages in date range, stopping further processing.`);
-				break;
 			}
 
 			// Wait for remaining promises to resolve
@@ -186,7 +178,7 @@ class Channel {
 			let lastThreadMessageId = null;
 
 			while (true) {
-				const options = { limit: 25 }; // Fetch 25 messages at a time
+				const options = { limit: 10 };
 				if (lastThreadMessageId) options.before = lastThreadMessageId;
 
 				const fetchedThreadMessages = await thread.messages.fetch(options);

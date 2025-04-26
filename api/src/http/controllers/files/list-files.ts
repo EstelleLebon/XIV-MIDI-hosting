@@ -33,46 +33,93 @@ export async function listFiles(app: FastifyTypedInstance) {
           sources: z.string().optional(),
           comments: z.string().optional(),
           tags: z.array(z.string()).optional(),
-          instrument: z
-            .enum([
-              'Piano',
-              'Harp',
-              'Fiddle',
-              'Lute',
-              'Fife',
-              'Flute',
-              'Oboe',
-              'Panpipes',
-              'Clarinet',
-              'Trumpet',
-              'Saxophone',
-              'Trombone',
-              'Horn',
-              'Tuba',
-              'Violin',
-              'Viola',
-              'Cello',
-              'DoubleBass',
-              'ElectricGuitarOverdriven',
-              'ElectricGuitarClean',
-              'ElectricGuitarMuted',
-              'ElectricGuitarPowerChords',
-              'ElectricGuitarSpecial',
-              'ElectricGuitar',
-              'Program:ElectricGuitar',
-              'BassDrum',
-              'SnareDrum',
-              'Cymbal',
-              'Bongo',
-              'Timpani',
-              'Unknown',
+          instrument: z.preprocess(
+            (value) => {
+              if (typeof value === 'string') {
+                try {
+                  return JSON.parse(value);
+                } catch {
+                  return value;
+                }
+              }
+              return value;
+            },
+            z.union([
+              z.enum([
+                'Piano',
+                'Harp',
+                'Fiddle',
+                'Lute',
+                'Fife',
+                'Flute',
+                'Oboe',
+                'Panpipes',
+                'Clarinet',
+                'Trumpet',
+                'Saxophone',
+                'Trombone',
+                'Horn',
+                'Tuba',
+                'Violin',
+                'Viola',
+                'Cello',
+                'DoubleBass',
+                'ElectricGuitarOverdriven',
+                'ElectricGuitarClean',
+                'ElectricGuitarMuted',
+                'ElectricGuitarPowerChords',
+                'ElectricGuitarSpecial',
+                'ElectricGuitar',
+                'Program:ElectricGuitar',
+                'BassDrum',
+                'SnareDrum',
+                'Cymbal',
+                'Bongo',
+                'Timpani',
+                'Unknown',
+              ]),
+              z.array(
+                z.enum([
+                  'Piano',
+                  'Harp',
+                  'Fiddle',
+                  'Lute',
+                  'Fife',
+                  'Flute',
+                  'Oboe',
+                  'Panpipes',
+                  'Clarinet',
+                  'Trumpet',
+                  'Saxophone',
+                  'Trombone',
+                  'Horn',
+                  'Tuba',
+                  'Violin',
+                  'Viola',
+                  'Cello',
+                  'DoubleBass',
+                  'ElectricGuitarOverdriven',
+                  'ElectricGuitarClean',
+                  'ElectricGuitarMuted',
+                  'ElectricGuitarPowerChords',
+                  'ElectricGuitarSpecial',
+                  'ElectricGuitar',
+                  'Program:ElectricGuitar',
+                  'BassDrum',
+                  'SnareDrum',
+                  'Cymbal',
+                  'Bongo',
+                  'Timpani',
+                  'Unknown',
+                ])
+              ),
             ])
-            .optional(),
+          ).optional(),
           discord: z.coerce.boolean().optional(),
           website: z.coerce.boolean().optional(),
           editor_channel: z.coerce.boolean().optional(),
           page: z.coerce.number().positive().default(1),
-          limit: z.coerce.number().positive().default(100),
+          limit: z.coerce.number().positive().default(999999999),
         }),
         response: {
           200: z.object({
@@ -141,10 +188,10 @@ export async function listFiles(app: FastifyTypedInstance) {
       // create a filter only with filled params so this route be more flexible, in the same route you can search for any filter
       if (md5) filter.md5 = md5;
       if (editor_discord_id) filter.editor_discord_id = editor_discord_id;
-      if (editor) filter.editor = editor;
-      if (artist) filter.artist = artist;
-      if (title) filter.title = title;
-      if (performer) filter.performer = performer;
+      if (editor) filter.editor = { contains: editor, mode: 'insensitive' }; 
+      if (artist) filter.artist = { contains: artist, mode: 'insensitive' }; 
+      if (title) filter.title = { contains: title, mode: 'insensitive' }; 
+      if (performer) filter.performer = { contains: performer, mode: 'insensitive' };
       if (tags) filter.tags = { hasSome: tags };
       if (instrument) {
         filter.AND = Array.isArray(instrument)
@@ -161,6 +208,9 @@ export async function listFiles(app: FastifyTypedInstance) {
         where: filter,
         skip: skip,
         take: limit,
+        orderBy: {
+          updatedAt: 'desc',
+        },
         include: {
           tracks: true,
         },
