@@ -52,10 +52,9 @@ class User {
 				} else {
 					this.logger.info(`[INIT] User ${this.discord_id} not found`);
 					await this.init_from_interaction()
+					this.editor_name = this.interaction.options.getString('editor-name') || this.discord_name;
 					this.initialized = true;
 					await this.create_user()
-					const cachedname = user.editor_name;
-					await this.handle_editor_name(cachedname);
 				}
 			} else {
 				this.logger.error(`[INIT] Error: this.discord_id: ${this.discord_id}`);
@@ -154,14 +153,14 @@ class User {
 				this.discord_name = discord_name
 				this.logger.debug(`[init_from_interaction] Discord name: ${this.discord_name}`);
 			}  // else this.error.addError(`Error: this.discord_name: ${this.discord_name}`);
-			if (admin) {
-				this.admin = admin
-				this.logger.debug(`[init_from_interaction] Admin: ${this.admin}`);
-			} // else this.error.addError(`Error: this.admin: ${this.admin}`);
-			if (editor_role) {
-				this.editor_role = editor_role
-				this.logger.debug(`[init_from_interaction] Editor role: ${this.editor_role}`);
-			} // else this.error.addError(`Error: this.editor_role: ${this.editor_role}`);
+
+			this.admin = Boolean(admin)
+			this.logger.debug(`[init_from_interaction] Admin: ${this.admin}`);
+
+
+			this.editor_role = Boolean(editor_role)
+			this.logger.debug(`[init_from_interaction] Editor role: ${this.editor_role}`);
+
 
 			this.logger.info(`[init_from_interaction] User ${this.discord_id} updated from interaction`);
 		} catch (error) {

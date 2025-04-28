@@ -12,14 +12,14 @@ const data = new SlashCommandBuilder()
         .setDescription('[optional] Number of performers / tracks.')
         .setRequired(false)
         .addChoices(
-            {name: 'solo', value: 'Solo'},
-            {name: 'duet', value: 'Duet'},
-            {name: 'trio', value: 'Trio'},
-            {name: 'quartet', value: 'Quartet'},
-            {name: 'quintet', value: 'Quintet'},
-            {name: 'sextet', value: 'Sextet'},
-            {name: 'septet', value: 'Septet'},
-            {name: 'octet', value: 'Octet'},
+            {name: 'Solo', value: 'Solo'},
+            {name: 'Duet', value: 'Duet'},
+            {name: 'Trio', value: 'Trio'},
+            {name: 'Quartet', value: 'Quartet'},
+            {name: 'Quintet', value: 'Quintet'},
+            {name: 'Sextet', value: 'Sextet'},
+            {name: 'Septet', value: 'Septet'},
+            {name: 'Octet', value: 'Octet'},
         )
     )
 
