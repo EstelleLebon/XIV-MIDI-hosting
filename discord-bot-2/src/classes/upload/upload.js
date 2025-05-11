@@ -4,6 +4,7 @@ import createLogger from "../logger/logger.js";
 import UploadPreview from "./uploadpreview.js";
 import File from "./file/file.js";
 import dbcheck from "../dbcheck/dbcheck.js";
+import { MessageFlags } from "discord.js";
 
 class Upload {
 	constructor(interaction, editor_role, ) {
@@ -36,7 +37,7 @@ class Upload {
 			this.logger.error(`Errors found: ${this.error.getMessage()}`);
 			return this.interaction.editReply({
 				content: `Errors found: ${this.error.message.length} errors`,
-				ephemeral: true,
+				flags: MessageFlags.Ephemeral,
 			});
 		}
 
@@ -56,7 +57,7 @@ class Upload {
 			this.logger.error(`Errors found: ${this.error.getMessage()}`);
 			return this.interaction.editReply({
 				content: `Errors found: ${this.error.message.length} errors`,
-				ephemeral: true,
+				flags: MessageFlags.Ephemeral,
 			});
 		}
 
@@ -69,7 +70,7 @@ class Upload {
 				this.logger.error(`Failed to update editor channel ID`);
 				return this.interaction.editReply({
 					content: `Failed to update editor channel ID. If you own a personal editor channel, please contact my developer.`,
-					ephemeral: true,
+					flags: MessageFlags.Ephemeral,
 				});
 			}
 		}
@@ -79,7 +80,7 @@ class Upload {
 			this.logger.error(`Errors found: ${this.error.getMessage()}`);
 			return this.interaction.editReply({
 				content: `Errors found: ${this.error.message.length} errors`,
-				ephemeral: true,
+				flags: MessageFlags.Ephemeral,
 			});
 		}
 
@@ -104,7 +105,7 @@ class Upload {
 				this.logger.debug(`File already exists, owner is different`);
 				return this.interaction.editReply({
 					content: `This file already exists, but you are not the owner. Please contact the owner to upload a new version.\nIf you are the owner, please contact my developer to fix this.`,
-					ephemeral: true,
+					flags: MessageFlags.Ephemeral,
 				});
 			}
 		} else if ( (this.file.pushes.discord == 1) || (this.file.pushes.editor == 1) || (this.file.pushes.website == 1) ) {
@@ -117,7 +118,7 @@ class Upload {
 			this.logger.error(`Pushes: ${JSON.stringify(this.file.pushes)}`);
 			return this.interaction.editReply({
 				content: `Unknown case for file pushes. Please contact my developer.`,
-				ephemeral: true,
+				flags: MessageFlags.Ephemeral,
 			});
 		}
 
@@ -143,7 +144,7 @@ class Upload {
 			this.logger.error(`Errors found: ${this.error.getMessage()}`);
 			return this.interaction.editReply({
 				content: `Errors found: ${this.error.message.length} errors`,
-				ephemeral: true,
+				flags: MessageFlags.Ephemeral,
 			});
 		}
 
@@ -171,7 +172,10 @@ class Upload {
 			const dbStatus = await db.check();
 			if (!dbStatus) {
 				this.logger.error('Database is down, aborting upload.');
-				return this.interaction.followUp({ content: 'Database is down, please try again later.', ephemeral: true });
+				return this.interaction.editReply({
+					content: 'Database is down, please try again later.',
+					flags: MessageFlags.Ephemeral,
+				});
 			}
 			this.logger.debug(`Database status: ${dbStatus}`);
 

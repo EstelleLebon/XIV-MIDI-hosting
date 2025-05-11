@@ -7,7 +7,7 @@ startlog(); // Initialize logging system for file management
 import createLogger from './classes/logger/logger.js';
 import check_message from './events/on_message.js';
 import cron from 'node-cron';
-// import customEvent from './events/backup_event.js';
+import backup_server from './events/backup-event.js';
 import editorArchiveEvent from './events/editor_channels_archive_event.js';
 
 // Initialize logger
@@ -49,7 +49,7 @@ for (const folder of commandFolders) {
 
 // Schedule the backup_event to trigger on the first day of every month at 00:00
 cron.schedule('0 0 1 * *', () => {
-    customEvent.emit('backup_event'); // Emit backup event
+    backup_server(); // Trigger the backup event
     logger.info('Scheduled backup_event triggered');
 });
 

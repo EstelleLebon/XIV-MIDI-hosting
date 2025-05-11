@@ -67,13 +67,33 @@ class Backup {
 			await this.initBackupList();
 		}
 
-		// Initialize download promises
+		// Initialize a pool of promises to process channels concurrently
+		const maxConcurrent = 5;
+		const pool = new Set();
+
 		for (const chan of this.backuplist) {
-			this.logger.debug(`[startBackup] Processing backup ID: ${chan}`);
-			const channel = new Channel(chan, null, this.fromDate);
-			await channel.worker();
-			this.logger.info(`[startBackup] Backup completed for ID: ${chan}`);
+			this.logger.debug(`[startBackup] Adding channel to pool: ${chan}`);
+
+			// Create a promise for the channel and add it to the pool
+			const promise = (async () => {
+				const channel = new Channel(chan, null, this.fromDate);
+				await channel.worker();
+				this.logger.info(`[startBackup] Backup completed for ID: ${chan}`);
+			})();
+
+			pool.add(promise);
+
+			// When a promise resolves, remove it from the pool
+			promise.finally(() => pool.delete(promise));
+
+			// If the pool is full, wait for one to finish
+			if (pool.size >= maxConcurrent) {
+				await Promise.race(pool);
+			}
 		}
+
+		// Wait for all remaining promises to resolve
+		await Promise.all(pool);
 
 		// Zip files 
 		this.logger.info(`[startBackup] Zipping files...`);

@@ -1,13 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import http from 'node:http';
-import { Client, Collection, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
+import { Client, Collection, Events, GatewayIntentBits } from 'discord.js';
 import startlog from './classes/logger/logger_file_management.js';
 startlog(); // Initialize logging system for file management
 import createLogger from './classes/logger/logger.js';
 import check_message from './events/on_message.js';
 import cron from 'node-cron';
-// import customEvent from './events/backup_event.js';
+import backup_server from './events/backup-event.js';
 import editorArchiveEvent from './events/editor_channels_archive_event.js';
 
 // Initialize logger
@@ -49,7 +49,7 @@ for (const folder of commandFolders) {
 
 // Schedule the backup_event to trigger on the first day of every month at 00:00
 cron.schedule('0 0 1 * *', () => {
-    customEvent.emit('backup_event'); // Emit backup event
+    backup_server(); // Trigger the backup event
     logger.info('Scheduled backup_event triggered');
 });
 
@@ -97,9 +97,9 @@ client.on(Events.InteractionCreate, async interaction => {
     } catch (error) {
         logger.error(error);
         if (interaction.replied || interaction.deferred) {
-            await interaction.followUp({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
+            await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
         } else {
-            await interaction.reply({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
+            await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
         }
     }
 });

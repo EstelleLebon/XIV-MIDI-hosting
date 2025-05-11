@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder, MessageFlags } from "discord.js";
 import createLogger from "../../classes/logger/logger.js";
 import Backup from "../../classes/backup/backup.js";
 
@@ -11,7 +11,7 @@ const data = new SlashCommandBuilder()
 	
 const execute = async (interaction) => {
 	logger.info(`[execute] Executing init backup command...`);
-	await interaction.deferReply({ ephemeral: true });
+	await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 	// set from to Date 1990-01-01
 	let fromDate = new Date('1990-01-01');
 	fromDate.setHours(0, 0, 0, 0);
@@ -21,7 +21,7 @@ const execute = async (interaction) => {
 	await backup.startBackup();
 	logger.info(`[execute] Init backup completed.`);
 	
-	await interaction.editReply({ content: 'Init backup completed.', ephemeral: true });
+	await interaction.editReply({ content: 'Init backup completed.', flags: MessageFlags.Ephemeral });
 }
 export { data, execute };
 export default {

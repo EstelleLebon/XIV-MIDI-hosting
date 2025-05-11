@@ -675,7 +675,7 @@ class File {
 			message += `**Artist:** ${this.artist}`;
 			message += `\n**Title:** ${this.title}`;
 			message += `\n**Duration:** ${duration}`;
-			message += `\n**Editor:** ${this.editor}`;
+			message += `\n**Editor:** [${this.editor}](discord://-/users/${this.editor_discord_id})`;
 			if (this.sources != null && this.sources != undefined && this.sources != '' && this.sources != ' ') {
 				message += `\n**Sources:** ${this.sources}`;
 			}
@@ -700,7 +700,7 @@ class File {
 			this.discord_message_id = messagesent.id;
 			this.discord_link = messagesent.url;
 
-			await preview.embed.updateEmbedField('Discord Push:', `[link](${this.discord_link})`);
+			await preview.embed.updateEmbedField('Discord Push:', `[Link](${this.discord_link})`);
 			await preview.updatePreview();
 
 			this.discordpushed = true;
@@ -763,7 +763,7 @@ class File {
 			const link = website_url.slice(0, -1) + this.website_link;
 			this.logger.debug(`[push_website] Link: ${link}`);
 
-			await preview.embed.updateEmbedField('Website Push:', `[link](${link})`);
+			await preview.embed.updateEmbedField('Website Push:', `[Link](${link})`);
 			await preview.updatePreview();
 
 			this.websitepushed = true;
@@ -915,7 +915,7 @@ class File {
 			const messagesent = await channel.send({ content: message, files: [{ attachment: this.buffer, name: this.filename }] });
 			this.editor_channel_link = messagesent.url;
 
-			await preview.embed.updateEmbedField('Editor Channel Push:', `[link](${this.editor_channel_link})`);
+			await preview.embed.updateEmbedField('Editor Channel Push:', `[Link](${this.editor_channel_link})`);
 			await preview.updatePreview();
 
 			this.editor_channel_pushed = true;

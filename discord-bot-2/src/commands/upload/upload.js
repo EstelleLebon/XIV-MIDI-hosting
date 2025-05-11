@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder, MessageFlags } from "discord.js";
 import createLogger from "../../classes/logger/logger.js";
 import Upload from "../../classes/upload/upload.js";
 import dbcheck from "../../classes/dbcheck/dbcheck.js";
@@ -6,7 +6,7 @@ import dbcheck from "../../classes/dbcheck/dbcheck.js";
 const logger = createLogger('Upload-Command');
 
 const data = new SlashCommandBuilder()
-    .setDefaultMemberPermissions(0x0000001000000000)
+    .setDefaultMemberPermissions(0x0000000800000000)
     .setName('upload')
     .setDescription("Upload MIDI files.")
     .addAttachmentOption(option => option
@@ -19,14 +19,14 @@ const data = new SlashCommandBuilder()
         .setDescription('[required] Number of performers / tracks.')
         .setRequired(true)
         .addChoices(
-            {name: 'solo', value: 'Solo'},
-            {name: 'duet', value: 'Duet'},
-            {name: 'trio', value: 'Trio'},
-            {name: 'quartet', value: 'Quartet'},
-            {name: 'quintet', value: 'Quintet'},
-            {name: 'sextet', value: 'Sextet'},
-            {name: 'septet', value: 'Septet'},
-            {name: 'octet', value: 'Octet'},
+            {name: 'Solo (1 Member)', value: 'Solo'},
+            {name: 'Duet (2 Members)', value: 'Duet'},
+            {name: 'Trio (3 Members)', value: 'Trio'},
+            {name: 'Quartet (4 Members)', value: 'Quartet'},
+            {name: 'Quintet (5 Members)', value: 'Quintet'},
+            {name: 'Sextet (6 Members)', value: 'Sextet'},
+            {name: 'Septet (7 Members)', value: 'Septet'},
+            {name: 'Octet (8 Members)', value: 'Octet'},
         )
     )
     .addStringOption(option => option
@@ -64,14 +64,14 @@ const execute = async (interaction) => {
     logger.info(`Upload command executed by ${interaction.user.tag} in ${interaction.guild.name}`);
     logger.debug(`User ID: ${interaction.user.id}`);
     logger.debug(`Channel ID: ${interaction.channel.id}`);
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     // check if db is up
     const db = new dbcheck();
     const dbStatus = await db.check();
     if (!dbStatus) {
         logger.error('Database is down, aborting upload.');
-        return interaction.editReply({ content: 'Database is down, please try again later.', ephemeral: true });
+        return interaction.editReply({ content: 'Database is down, please try again later.', flags: MessageFlags.Ephemeral });
     }
     logger.debug(`Database status: ${dbStatus}`);
     const work = new Upload(interaction, false);
