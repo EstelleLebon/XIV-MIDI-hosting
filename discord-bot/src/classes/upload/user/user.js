@@ -48,7 +48,8 @@ class User {
 					const cachedname = user.editor_name;
 					await this.handle_editor_name(cachedname);
 					this.initialized = true;
-					await this.update_user({ discord_name: this.discord_name, editor_channel_id: this.editor_channel_id, admin: this.admin, editor_role: this.editor_role })
+					await this.update_user({ discord_name: this.discord_name, editor_name: this.editor_name, editor_channel_id: this.editor_channel_id, admin: this.admin, editor_role: this.editor_role })
+
 				} else {
 					this.logger.info(`[INIT] User ${this.discord_id} not found`);
 					await this.init_from_interaction()

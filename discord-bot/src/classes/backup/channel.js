@@ -135,7 +135,8 @@ class Channel {
 		let lastId = null;
 		const maxConcurrent = 10;
 
-		while (true) {
+		let datecheck = true;
+		while (datecheck) {
 			const options = { limit: 10 };
 			if (lastId) options.before = lastId;
 
@@ -148,6 +149,12 @@ class Channel {
 			for (const message of fetchedMessages.values()) {
 				const messageDate = message.createdAt;
 				this.logger.debug(`[worker] Message ID: ${message.id}, Date: ${messageDate}`);
+
+				if (messageDate < this.fromDate) {
+					this.logger.debug(`[worker] Message ${message.id} is older than the date range, stopping.`);
+					datecheck = false;
+					break;
+				}
 
 				if (messageDate >= this.fromDate && messageDate <= this.toDate) {
 					this.logger.debug(`[worker] Message ${message.id} is within date range`);
@@ -176,8 +183,8 @@ class Channel {
 
 		for (const thread of allThreads) {
 			let lastThreadMessageId = null;
-
-			while (true) {
+			datecheck = true;
+			while (datecheck) {
 				const options = { limit: 10 };
 				if (lastThreadMessageId) options.before = lastThreadMessageId;
 
@@ -190,6 +197,12 @@ class Channel {
 				for (const message of fetchedThreadMessages.values()) {
 					const messageDate = message.createdAt;
 					this.logger.debug(`[worker] Thread Message ID: ${message.id}, Date: ${messageDate}`);
+
+					if (messageDate < this.fromDate) {
+						this.logger.debug(`[worker] Thread Message ${message.id} is older than the date range, stopping.`);
+						datecheck = false;
+						break;
+					}
 
 					if (messageDate >= this.fromDate && messageDate <= this.toDate) {
 						this.logger.debug(`[worker] Thread Message ${message.id} is within date range`);

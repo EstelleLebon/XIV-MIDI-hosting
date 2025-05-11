@@ -97,8 +97,8 @@ class MessageCheck {
 				reply = `Messages in this channel must contain a ZIP or RAR file attachment(s).`;
 				break;
 			case 3:
-				this.logger.info('[check_upload] Invalid file uploaded - trying to delete message');
-				reply = `Messages in this channel must contain a MIDI and optionally LRC or MP3 file attachment(s).`;
+				this.logger.info('[check_upload] Manual upload - trying to delete message');
+				reply = `This channel is locked for manual upload. Please use [bot commands](https://discord.com/channels/998261522683924491/1208883710057775186) to upload files.`;
 				break;
 		}
 
@@ -149,26 +149,20 @@ class MessageCheck {
 		this.logger.debug(`[validitycheck] Attachments size: ${this.attachments.size}`);
 
 		// Check if there are no attachments
-		if (this.attachments.size == 0) {
-			this.logger.info('[validitycheck] No file uploaded');
-			this.validity = 1;
-		}
-		// Check if the channel requires ZIP/RAR files
-		else if (this.channel == process.env.pack) {
-			for (const attachment of this.attachments.values()) {
-				if (!(attachment.name.endsWith('.zip') || attachment.name.endsWith('.7z') || attachment.name.endsWith('.rar'))) {
-					this.logger.info('[validitycheck] Invalid file uploaded');
-					this.validity = 2;
+		if (this.channel == process.env.pack) {
+			if (this.attachments.size == 0) {
+				this.logger.info('[validitycheck] No file uploaded');
+				this.validity = 2;
+			} else {
+				for (const attachment of this.attachments.values()) {
+					if (!(attachment.name.endsWith('.zip') || attachment.name.endsWith('.7z') || attachment.name.endsWith('.rar'))) {
+						this.logger.info('[validitycheck] Invalid file uploaded');
+						this.validity = 2;
+					}
 				}
 			}
 		} else {
-			// Check if the channel requires MIDI/LRC files
-			for (const attachment of this.attachments.values()) {
-				if (!(attachment.name.endsWith('.mid') || attachment.name.endsWith('.midi') || attachment.name.endsWith('.lrc') || attachment.name.endsWith('.mp3'))) {
-					this.logger.info('[validitycheck] Invalid file uploaded');
-					this.validity = 3;
-				}
-			}
+			this.validity = 3;
 		}
 		this.logger.debug(`[validitycheck] Validity: ${this.validity}`);
 	}

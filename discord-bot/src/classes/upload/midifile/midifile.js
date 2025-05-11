@@ -405,7 +405,7 @@ class MidiFile {
 				if (!namecheck) {
 					if (event.type === 'meta' && event.subtype === 'trackName') {
 						this.logger.debug(`Track name: ${event.text}`);
-						Track.name = event.text;
+						Track.name = event.text.replace(/[^\x00-\x7F]/g, '');
 						namecheck = true;
 					}
 				}
@@ -424,6 +424,9 @@ class MidiFile {
 
 				Track.modifier = await this.check_track_modifier(Track.name);
 				this.logger.debug(`Track modifier: ${Track.modifier}`);
+
+				// Remove null character from track names during initialization
+				Track.name = Track.name.replace(/\u0000/g, '');
 
 				Track.instrument = await this.check_instrument(Track.order, Track.name, Track.modifier, track);
 				this.logger.debug(`Track instrument: ${Track.instrument}`);
